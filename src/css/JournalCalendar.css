@@ -1,0 +1,49 @@
+/* Change the background color of the calendar squares (days) */
+.rbc-month-view .rbc-day-bg {
+  background-color: #fff; /* Change this to your desired background color */
+}
+
+.rbc-month-view .rbc-date-cell {
+  background-color: #fff; /* Change this to your desired background color */
+}
+
+/* Optional: Change the color of the text inside the calendar squares */
+.rbc-month-view .rbc-date-cell {
+  color: #000; /* Change this to your desired text color */
+}
+
+.rbc-header {
+  background-color: #1f2937;
+  color: white
+}
+
+.rbc.calendar {
+  background-color: #7eb2e6;
+}
+
+.rbc-show-more {
+  color: black !important;
+  font-weight:400;
+}
+
+/* Customize the popup background color */
+.rbc-overlay {
+  background-color: #1f2937; /* Change to your desired background color */
+  color: white; /* Change to your desired text color */
+  border-radius: 8px; /* Optional: Add border radius */
+  padding: 10px; /* Optional: Add padding */
+}
+
+/* Customize the popup event item background color */
+.rbc-overlay .rbc-event {
+  background-color: #4a5568; /* Change to your desired event background color */
+  color: white !important; /* Change to your desired event text color */
+  border-radius: 4px; /* Optional: Add border radius */
+  padding: 5px; /* Optional: Add padding */
+}
+
+/* Customize the popup event item hover state */
+.rbc-overlay .rbc-event:hover {
+  background-color: #2d3748; /* Change to your desired hover background color */
+  color: #a78df8 !important; /* Change to your desired hover text color */
+}

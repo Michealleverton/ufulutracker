@@ -1,0 +1,41 @@
+.stat-card {
+  padding: 16px;
+  margin: 8px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-container {
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #1f2937;
+  padding: 10px 0;
+}
+
+.ticker-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker 30s linear infinite;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.ticker-item {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.ticker-separator {
+  margin: 0 10px;
+  color: #888;
+}
