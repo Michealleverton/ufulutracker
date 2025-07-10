@@ -1,0 +1,107 @@
+/* Change the background color of the calendar squares (days) */
+.rbc-month-view .rbc-day-bg {
+  background-color: #1f2937;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000; /* Change this to your desired background color */
+}
+
+.rbc-month-view .rbc-date-cell {
+  background-color: #fff; /* Change this to your desired background color */
+}
+
+/* Optional: Change the color of the text inside the calendar squares */
+/* Example: .rbc-month-view .rbc-date-cell { color: #fff; } */
+
+.rbc-header {
+  background-color: #1f2937;
+  color: white
+}
+
+.rbc.calendar {
+  background-color: #7eb2e6;
+}
+
+.rbc-show-more {
+  color: black !important;
+  font-weight:400;
+}
+
+/* Customize the popup background color */
+.rbc-overlay {
+  background-color: #1f2937; /* Change to your desired background color */
+  color: white; /* Change to your desired text color */
+  border-radius: 8px; /* Optional: Add border radius */
+  padding: 10px; /* Optional: Add padding */
+}
+
+/* Customize the popup event item background color */
+.rbc-overlay .rbc-event {
+  background-color: #4a5568; /* Change to your desired event background color */
+  color: white !important; /* Change to your desired event text color */
+  border-radius: 4px; /* Optional: Add border radius */
+  padding: 5px; /* Optional: Add padding */
+}
+
+/* Customize the popup event item hover state */
+.rbc-overlay .rbc-event:hover {
+  background-color: #2d3748; /* Change to your desired hover background color */
+  color: #a78df8 !important; /* Change to your desired hover text color */
+}
+
+/* JournalCalendar.css */
+.rbc-date-header-btn {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  z-index: 2;
+  font-weight: normal;
+  cursor: pointer;
+  background: rgba(255,255,255,0);
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 1em;
+  border: none;
+  /* Add drop shadow */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Adjust values as needed */
+}
+
+.rbc-date-header-btn.today {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+/* This rule is likely redundant for the date number itself
+   if the rule below is used, but might affect other elements
+   within the cell if they inherit color. */
+.rbc-month-view .rbc-date-cell.has-trades,
+.rbc-month-view .rbc-date-cell.has-trades * {
+  color: black !important;
+}
+
+/* This rule will now correctly set the date number color to black on days with trades */
+.rbc-month-view .rbc-date-cell.has-trades .rbc-date-header-btn {
+  color: black !important;
+}
+
+/* Ensure the event container is visible and has space */
+.rbc-month-view .rbc-day-cell .rbc-row-segment {
+  display: block !important; /* Make sure it's not hidden */
+  min-height: 20px; /* Give it some minimum height */
+  overflow: visible; /* Ensure content isn't clipped */
+  /* Add borders temporarily to see its area */
+  /* border: 1px solid green !important; */
+}
+
+/* Ensure the +X more link is visible */
+.rbc-show-more {
+  display: block !important; /* Make sure it's not hidden */
+  /* Add borders temporarily to see its area */
+  /* border: 1px solid purple !important; */
+}
+
+/* Adjust padding/margin on the cell if needed */
+.rbc-month-view .rbc-day-cell {
+  padding-top: 20px; /* Add padding to make space below the date header/button */
+  /* Add borders temporarily to see its area */
+  /* border: 1px solid red !important; */
+}
