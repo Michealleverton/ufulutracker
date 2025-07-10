@@ -25,7 +25,7 @@ const TradingViewWidget = () => {
         // Create unique storage key based on user
         const storageKey = user ? `tv_chart_${user.id}` : 'tv_chart_guest';
         
-        // Initialize the TradingView widget with localStorage
+        // Initialize the TradingView widget with full functionality
         const widget = new window.TradingView.widget({
           container_id: 'tradingview-widget',
           width: '100%',
@@ -36,7 +36,7 @@ const TradingViewWidget = () => {
           theme: 'dark',
           style: '1',
           locale: 'en',
-          toolbar_bg: '#f1f3f6',
+          toolbar_bg: '#131722',
           enable_publishing: false,
           allow_symbol_change: true,
           details: true,
@@ -49,33 +49,65 @@ const TradingViewWidget = () => {
           // Use a unique storage key for this user
           client_id: storageKey,
           user_id: user?.id || 'guest',
-          // Enable localStorage features
-          auto_save_delay: 5, // Auto-save every 5 seconds
-          // Enable drawing tools and studies persistence
+          // Enable localStorage features and auto-save
+          auto_save_delay: 10, // Auto-save every 10 seconds
+          // Make sure all essential features are enabled
           disabled_features: [
-            'header_symbol_search',
-            'symbol_search_hot_key'
+            // Only disable features we don't want
+            'use_localstorage_for_settings' // We'll handle this manually
           ],
           enabled_features: [
+            // Core functionality
             'study_templates',
-            'save_chart_properties_to_local_storage',
-            'chart_property_page_style',
             'left_toolbar',
+            'header_toolbar',
+            'timeframes_toolbar',
+            'edit_buttons_in_legend',
+            'context_menus',
+            'control_bar',
+            'border_around_the_chart',
+            
+            // Drawing tools
+            'drawing_templates',
+            'shape_templates',
+            'show_chart_property_page',
+            'chart_property_page_style',
+            
+            // Header features
             'header_chart_type',
-            'header_resolutions',
+            'header_resolutions', 
             'header_interval_dialog_button',
             'show_interval_dialog_on_key_press',
             'header_symbol_search',
+            'symbol_search_hot_key',
+            'header_compare',
             'compare_symbol',
-            'border_around_the_chart',
-            'remove_library_container_border'
+            'header_undo_redo',
+            'header_screenshot',
+            'header_fullscreen_button',
+            
+            // Studies/Indicators
+            'study_dialog_search_control',
+            'study_market_minimized',
+            'show_hide_button_in_legend',
+            'modify_study_inputs',
+            'study_buttons_in_legend',
+            
+            // Other useful features
+            'show_logo_on_all_charts',
+            'side_toolbar_in_fullscreen_mode',
+            'header_saveload',
+            'create_volume_indicator_by_default'
           ],
-          // Override default localStorage behavior
-          custom_css_url: undefined,
+          // Chart styling
           loading_screen: { backgroundColor: '#131722' },
-          // Studies and drawing tools configuration
-          studies_overrides: {},
+          studies_overrides: {
+            "volume.volume.color.0": "#ef5350",
+            "volume.volume.color.1": "#26a69a",
+            "volume.volume.transparency": 80,
+          },
           overrides: {
+            // Candlestick styling
             "mainSeriesProperties.candleStyle.upColor": "#26a69a",
             "mainSeriesProperties.candleStyle.downColor": "#ef5350",
             "mainSeriesProperties.candleStyle.drawWick": true,
@@ -85,11 +117,30 @@ const TradingViewWidget = () => {
             "mainSeriesProperties.candleStyle.borderDownColor": "#ef5350",
             "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
             "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350",
+            
+            // Chart background and grid
             "paneProperties.background": "#131722",
+            "paneProperties.backgroundType": "solid",
             "paneProperties.vertGridProperties.color": "#363c4e",
-            "paneProperties.horzGridProperties.color": "#363c4e",
+            "paneProperties.vertGridProperties.style": 0,
+            "paneProperties.horzGridProperties.color": "#363c4e", 
+            "paneProperties.horzGridProperties.style": 0,
+            "paneProperties.crossHairProperties.color": "#9598A1",
+            "paneProperties.crossHairProperties.width": 1,
+            "paneProperties.crossHairProperties.style": 2,
+            
+            // Scale properties
+            "scalesProperties.backgroundColor": "#131722",
+            "scalesProperties.textColor": "#d1d4dc",
+            "scalesProperties.fontSize": 12,
+            "scalesProperties.lineColor": "#363c4e",
+            
+            // Symbol watermark
             "symbolWatermarkProperties.transparency": 90,
-            "scalesProperties.textColor": "#AAA",
+            "symbolWatermarkProperties.color": "#434651",
+            
+            // Volume
+            "volumePaneSize": "medium"
           }
         });
 
