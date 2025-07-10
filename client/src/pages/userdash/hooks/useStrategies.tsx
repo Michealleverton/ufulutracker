@@ -219,7 +219,7 @@ export const useStrategies = () => {
           // Always create at least one strategy
           defaultStrategies.push({
             user_id: authUser.id,
-            name: 'Main Strategy',
+            name: 'Strategy 1',
             description: 'Your primary trading strategy',
             is_active: true,
           });
@@ -229,14 +229,14 @@ export const useStrategies = () => {
             defaultStrategies.push(
               {
                 user_id: authUser.id,
-                name: 'Scalping Strategy',
-                description: 'Short-term scalping trades',
+                name: 'Strategy 2',
+                description: 'Secondary trading strategy',
                 is_active: false,
               },
               {
                 user_id: authUser.id,
-                name: 'Swing Trading',
-                description: 'Medium-term swing trades',
+                name: 'Strategy 3',
+                description: 'Third trading strategy',
                 is_active: false,
               }
             );
@@ -244,20 +244,20 @@ export const useStrategies = () => {
             defaultStrategies.push(
               {
                 user_id: authUser.id,
-                name: 'Scalping Strategy',
-                description: 'Short-term scalping trades',
+                name: 'Strategy 2',
+                description: 'Secondary trading strategy',
                 is_active: false,
               },
               {
                 user_id: authUser.id,
-                name: 'Swing Trading',
-                description: 'Medium-term swing trades',
+                name: 'Strategy 3',
+                description: 'Third trading strategy',
                 is_active: false,
               },
               {
                 user_id: authUser.id,
-                name: 'Long Term Investment',
-                description: 'Long-term position trades',
+                name: 'Strategy 4',
+                description: 'Fourth trading strategy',
                 is_active: false,
               }
             );
@@ -303,7 +303,7 @@ export const useStrategies = () => {
             console.log("Retrying with single basic strategy...");
             const basicStrategy = {
               user_id: authUser.id,
-              name: 'Main Strategy',
+              name: 'Strategy 1',
               description: 'Your primary trading strategy',
               is_active: true,
             };
@@ -359,7 +359,7 @@ export const useStrategies = () => {
               const fallbackStrategy = {
                 id: 'temp-strategy-1',
                 user_id: authUser.id,
-                name: 'Default Strategy',
+                name: 'Strategy 1',
                 description: 'Your main trading strategy',
                 is_active: true,
                 created_at: new Date().toISOString(),
@@ -376,7 +376,7 @@ export const useStrategies = () => {
             const fallbackStrategy = {
               id: 'temp-strategy-1',
               user_id: authUser.id,
-              name: 'Default Strategy', 
+              name: 'Strategy 1', 
               description: 'Your main trading strategy',
               is_active: true,
               created_at: new Date().toISOString(),

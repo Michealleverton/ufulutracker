@@ -13,6 +13,9 @@ import {
   CircleX,
   Plus,
   Trash2,
+  Edit,
+  Check,
+  X,
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { supabase } from "../../../lib/supabase";
@@ -32,7 +35,10 @@ const Dashboard = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [showCreateStrategy, setShowCreateStrategy] = useState(false);
   const [newStrategyName, setNewStrategyName] = useState("");
+  const [editingStrategyId, setEditingStrategyId] = useState<string | null>(null);
+  const [editingStrategyName, setEditingStrategyName] = useState("");
   const chatBox = useRef<HTMLDivElement>(null)
+  const strategyMenuRef = useRef<HTMLDivElement>(null)
 
   const { theme } = useTheme();
   const {
@@ -43,6 +49,7 @@ const Dashboard = () => {
     createStrategy,
     setActiveStrategyById,
     deleteStrategy,
+    updateStrategy,
     clearError,
     refetch
   } = useStrategyContext();
@@ -80,6 +87,23 @@ const Dashboard = () => {
       clearError();
     }
   }, [strategiesError, clearError]);
+
+  // Handle click outside strategy menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (strategyMenuRef.current && !strategyMenuRef.current.contains(event.target as Node)) {
+        setIsStrategyOpen(false);
+      }
+    };
+
+    if (isStrategyOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isStrategyOpen]);
 
   const createChatTable = async () => {
     await supabase.rpc("create_chat_table");
@@ -167,6 +191,33 @@ const Dashboard = () => {
     } catch (error) {
       // Error is already handled by the context and shown via toast
       console.error('Failed to set active strategy:', error);
+    }
+  };
+
+  const startEditingStrategy = (strategyId: string, currentName: string) => {
+    setEditingStrategyId(strategyId);
+    setEditingStrategyName(currentName);
+  };
+
+  const cancelEditingStrategy = () => {
+    setEditingStrategyId(null);
+    setEditingStrategyName("");
+  };
+
+  const saveStrategyName = async (strategyId: string) => {
+    if (!editingStrategyName.trim()) {
+      toast.error('Please enter a strategy name');
+      return;
+    }
+
+    try {
+      await updateStrategy(strategyId, { name: editingStrategyName.trim() });
+      setEditingStrategyId(null);
+      setEditingStrategyName("");
+      toast.success('Strategy name updated');
+    } catch (error) {
+      console.error('Failed to update strategy name:', error);
+      toast.error('Failed to update strategy name');
     }
   };
 
@@ -268,7 +319,7 @@ const Dashboard = () => {
 
         <nav className="mt-4 relative">
           {menuItems.map((item) => (
-            <div key={item.label} className="relative">
+            <div key={item.label} className="relative" ref={item.label === "Strategies" ? strategyMenuRef : undefined}>
               <Link
                 to={item.path}
                 className={`flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white ${
@@ -318,25 +369,71 @@ const Dashboard = () => {
                             strategy.is_active ? 'bg-indigo-900 border border-indigo-400' : 'hover:bg-gray-700'
                           }`}
                         >
-                          <button
-                            onClick={() => handleSetActiveStrategy(strategy.id)}
-                            className={`flex-1 text-left text-sm ${
-                              strategy.is_active ? 'text-indigo-300 font-semibold' : 'text-gray-300 hover:text-white'
-                            }`}
-                          >
-                            {strategy.name}
-                            {strategy.is_active && (
-                              <span className="ml-2 text-xs bg-indigo-600 px-2 py-1 rounded">Active</span>
-                            )}
-                          </button>
-                          {strategies.length > 1 && (
-                            <button
-                              onClick={() => handleDeleteStrategy(strategy.id)}
-                              className="ml-2 text-red-400 hover:text-red-300 p-1"
-                              title="Delete strategy"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                          {editingStrategyId === strategy.id ? (
+                            // Edit mode
+                            <div className="flex items-center space-x-2 flex-1">
+                              <input
+                                type="text"
+                                value={editingStrategyName}
+                                onChange={(e) => setEditingStrategyName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    saveStrategyName(strategy.id);
+                                  } else if (e.key === 'Escape') {
+                                    cancelEditingStrategy();
+                                  }
+                                }}
+                                className="flex-1 px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-indigo-400"
+                                autoFocus
+                              />
+                              <button
+                                onClick={() => saveStrategyName(strategy.id)}
+                                className="text-green-400 hover:text-green-300 p-1"
+                                title="Save"
+                              >
+                                <Check size={14} />
+                              </button>
+                              <button
+                                onClick={cancelEditingStrategy}
+                                className="text-red-400 hover:text-red-300 p-1"
+                                title="Cancel"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : (
+                            // Display mode
+                            <>
+                              <button
+                                onClick={() => handleSetActiveStrategy(strategy.id)}
+                                className={`flex-1 text-left text-sm ${
+                                  strategy.is_active ? 'text-indigo-300 font-semibold' : 'text-gray-300 hover:text-white'
+                                }`}
+                              >
+                                {strategy.name}
+                                {strategy.is_active && (
+                                  <span className="ml-2 text-xs bg-indigo-600 px-2 py-1 rounded">Active</span>
+                                )}
+                              </button>
+                              <div className="flex items-center space-x-1">
+                                <button
+                                  onClick={() => startEditingStrategy(strategy.id, strategy.name)}
+                                  className="text-yellow-400 hover:text-yellow-300 p-1"
+                                  title="Edit strategy name"
+                                >
+                                  <Edit size={14} />
+                                </button>
+                                {strategies.length > 1 && (
+                                  <button
+                                    onClick={() => handleDeleteStrategy(strategy.id)}
+                                    className="text-red-400 hover:text-red-300 p-1"
+                                    title="Delete strategy"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            </>
                           )}
                         </div>
                       ))}
