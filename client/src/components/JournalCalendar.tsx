@@ -35,6 +35,9 @@ const JournalCalendar: React.FC = () => {
   const [price, setPrice] = useState<number>(0);
   const [profit, setProfit] = useState<number>(0);
   const [notes, setNotes] = useState("");
+  
+  // String states to preserve input during typing
+  const [priceInput, setPriceInput] = useState("");
 
   const [editingTradeId, setEditingTradeId] = useState<string | null>(null);
 
@@ -112,6 +115,7 @@ const JournalCalendar: React.FC = () => {
     setType(trade.type);
     setQuantity(trade.quantity);
     setPrice(trade.price);
+    setPriceInput(trade.price.toString());
     setProfit(trade.profit);
     setNotes(trade.notes);
     setModalOpen(true);
@@ -119,7 +123,8 @@ const JournalCalendar: React.FC = () => {
 
   // Save new or edited trade entry
   const handleSaveNewEntry = async () => {
-    if (!modalDate) return;
+    if (!modalDate || !activeStrategy || !user) return;
+    
     const entry = {
       date: modalDate.toISOString(),
       symbol,
@@ -128,6 +133,8 @@ const JournalCalendar: React.FC = () => {
       price,
       profit,
       notes,
+      user_id: user.id,
+      strategy_id: activeStrategy.id,
     };
 
     if (editingTradeId) {
@@ -145,8 +152,7 @@ const JournalCalendar: React.FC = () => {
             e.id === editingTradeId ? { ...entry, id: editingTradeId } : e
           )
         );
-        setModalOpen(false);
-        setEditingTradeId(null);
+        closeModal();
       }
     } else {
       // Insert new trade
@@ -155,7 +161,7 @@ const JournalCalendar: React.FC = () => {
         console.error("Error saving entry:", error);
       } else if (data && data.length > 0) {
         setEntries([...entries, { ...entry, id: data[0].id } as TradeEntry]);
-        setModalOpen(false);
+        closeModal();
       }
     }
   };
@@ -164,13 +170,26 @@ const JournalCalendar: React.FC = () => {
   const openNewTradeModal = (date: Date) => {
     setEditingTradeId(null);
     setModalDate(date);
+    resetForm();
+    setModalOpen(true);
+  };
+
+  // Helper function to reset form fields
+  const resetForm = () => {
     setSymbol("");
     setType("");
     setQuantity(0);
     setPrice(0);
+    setPriceInput("");
     setProfit(0);
     setNotes("");
-    setModalOpen(true);
+  };
+
+  // Helper function to close modal and reset form
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditingTradeId(null);
+    resetForm();
   };
 
   const eventStyleGetter = (event: any) => {
@@ -245,7 +264,9 @@ const JournalCalendar: React.FC = () => {
     <div className="px-10">
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-white mb-2">Trading Calendar - {activeStrategy.name}</h1>
-        <p className="text-gray-400">View and manage your trades for this strategy</p>
+        {/* <p className="text-gray-400">View and manage your trades for this strategy</p> */}
+        <p className="text-gray-400">Click the day you want to add a new trade. </p>
+        <p className="text-gray-400">Click on a trade to update it</p>
       </div>
       <Calendar
         localizer={localizer}
@@ -304,23 +325,33 @@ const JournalCalendar: React.FC = () => {
                   </label>
                   <label>
                     <span className="modal-label">Type</span>
-                    <input
+                    <select
                       className="modal-input"
-                      type="text"
                       value={type}
                       onChange={e => setType(e.target.value)}
                       required
-                      maxLength={10}
-                    />
+                    >
+                      <option value="">Select Type</option>
+                      <option value="buy">Buy</option>
+                      <option value="sell">Sell</option>
+                    </select>
                   </label>
                   <label>
                     <span className="modal-label">Quantity</span>
                     <input
                       className="modal-input"
                       type="number"
-                      value={quantity}
-                      onChange={e => setQuantity(Number(e.target.value))}
+                      value={quantity || ''}
+                      onChange={e => {
+                        const value = e.target.value;
+                        // Allow empty string or valid numbers
+                        if (value === '' || !isNaN(Number(value))) {
+                          setQuantity(value === '' ? 0 : Number(value));
+                        }
+                      }}
                       min={0}
+                      step="any"
+                      placeholder="0"
                       required
                     />
                   </label>
@@ -331,10 +362,23 @@ const JournalCalendar: React.FC = () => {
                     <input
                       className="modal-input"
                       type="number"
-                      value={price}
-                      onChange={e => setPrice(Number(e.target.value))}
+                      value={priceInput}
+                      onChange={e => {
+                        const value = e.target.value;
+                        setPriceInput(value);
+                        // Update the numeric price state
+                        if (value === '') {
+                          setPrice(0);
+                        } else {
+                          const numValue = Number(value);
+                          if (!isNaN(numValue)) {
+                            setPrice(numValue);
+                          }
+                        }
+                      }}
                       min={0}
-                      step="any" // Allow any decimal value
+                      step="any"
+                      placeholder="0.00000"
                       required
                     />
                   </label>
@@ -343,9 +387,16 @@ const JournalCalendar: React.FC = () => {
                     <input
                       className="modal-input"
                       type="number"
-                      value={profit}
-                      onChange={e => setProfit(Number(e.target.value))}
-                      step="any" // Allow any decimal value
+                      value={profit || ''}
+                      onChange={e => {
+                        const value = e.target.value;
+                        // Allow empty string or valid numbers (including negative for losses)
+                        if (value === '' || !isNaN(Number(value))) {
+                          setProfit(value === '' ? 0 : Number(value));
+                        }
+                      }}
+                      step="any"
+                      placeholder="0.00"
                       required
                     />
                   </label>
@@ -368,7 +419,7 @@ const JournalCalendar: React.FC = () => {
                   <button
                     className="modal-btn modal-btn-secondary"
                     type="button"
-                    onClick={() => setModalOpen(false)}
+                    onClick={closeModal}
                   >
                     Cancel
                   </button>

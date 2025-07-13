@@ -171,7 +171,7 @@ const TradingPlan = () => {
       <div className="text-white p-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-            <Target size={36} />
+            {/* <Target size={36} /> */}
             My Trading Plan
           </h1>
           <p className="text-indigo-100 text-lg">Your roadmap to trading success</p>
