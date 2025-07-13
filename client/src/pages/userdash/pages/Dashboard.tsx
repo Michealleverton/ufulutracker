@@ -61,7 +61,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     getProfile();
-    createChatTable();
     
     // Check if we need to refresh strategies after subscription update
     const needsRefresh = localStorage.getItem('needsStrategiesRefresh');
@@ -104,10 +103,6 @@ const Dashboard = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isStrategyOpen]);
-
-  const createChatTable = async () => {
-    await supabase.rpc("create_chat_table");
-  };
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
