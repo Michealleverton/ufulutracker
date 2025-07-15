@@ -96,15 +96,19 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
   const calendarDays: DayData[] = [];
 
   // Previous month trailing days
-  for (let i = trailingDays - 1; i >= 0; i--) {
-    const date = new Date(currentYear, currentMonth - 1, prevMonth.getDate() - i);
-    calendarDays.push({
-      date,
-      trades: getTradesForDate(date),
-      totalPL: getTotalPLForDate(date),
-      isCurrentMonth: false,
-      isToday: isSameDay(date, today)
-    });
+  // Only add trailing days if trailingDays > 0
+  if (trailingDays > 0) {
+    const lastDayPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+    for (let i = trailingDays; i > 0; i--) {
+      const date = new Date(currentYear, currentMonth - 1, lastDayPrevMonth - (trailingDays - i));
+      calendarDays.push({
+        date,
+        trades: getTradesForDate(date),
+        totalPL: getTotalPLForDate(date),
+        isCurrentMonth: false,
+        isToday: isSameDay(date, today)
+      });
+    }
   }
 
   // Current month days
