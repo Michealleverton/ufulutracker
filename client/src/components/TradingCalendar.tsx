@@ -88,8 +88,8 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
   const prevMonth = new Date(currentYear, currentMonth - 1, 0);
   const trailingDays = firstDayOfWeek;
 
-  // Calculate total cells needed (42 for perfect 6x7 grid)
-  const totalCells = 42;
+  // Calculate total cells needed (35 for 5x7 grid)
+  const totalCells = 35;
   const leadingDays = totalCells - trailingDays - daysInMonth;
 
   // Build calendar days array
