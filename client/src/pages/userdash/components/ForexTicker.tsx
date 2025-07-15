@@ -79,21 +79,22 @@ export const ForexTicker = () => {
   const duration = contentWidth ? `${contentWidth / 50}s` : "26s";
 
   const getPercentChange = (rate: number | null, prevRate: number | null) => {
-    if (!rate || !prevRate) return "Closed";
+    if (!rate || !prevRate) return "N/A";
     const change = ((rate - prevRate) / prevRate) * 100;
-    // If the change is exactly zero, it's likely a closed market
-    if (change === 0) return "Closed";
     return `${change > 0 ? "+" : ""}${change.toFixed(2)}%`;
   };
 
   return (
     <div
-      className="w-full bg-gray-800 text-base text-white py-2 px-4 overflow-hidden mb-4"
+      className="w-full bg-gray-800 text-base text-white py-2 px-4 overflow-hidden mb-4 relative"
       style={{
         boxShadow:
           "inset 20px 0 20px -20px rgba(0,0,0,0.5), inset -20px 0 20px -20px rgba(0,0,0,0.5)",
       }}
     >
+      <div className="absolute left-4 top-2 text-xs text-gray-400">
+        Forex: 🟢 24/5 OPEN
+      </div>
       <div
         ref={contentRef}
         className="flex whitespace-nowrap"

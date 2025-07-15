@@ -1,107 +1,285 @@
-/* Change the background color of the calendar squares (days) */
-.rbc-month-view .rbc-day-bg {
+/* Modern Calendar Styling for Ufulu Tracker - CLEAN VERSION */
+
+/* Main calendar background */
+.rbc-calendar {
   background-color: #1f2937;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000; /* Change this to your desired background color */
+  border-radius: 12px;
+  border: 1px solid #374151;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1000px; /* Control max width for better square cells */
+  margin: 0 auto;
 }
 
-.rbc-month-view .rbc-date-cell {
-  background-color: #fff; /* Change this to your desired background color */
+/* Calendar table structure for square cells */
+.rbc-calendar .rbc-month-view table {
+  table-layout: fixed;
+  width: 100%;
 }
 
-/* Optional: Change the color of the text inside the calendar squares */
-/* Example: .rbc-month-view .rbc-date-cell { color: #fff; } */
+.rbc-calendar .rbc-month-view table td {
+  width: 14.285714%; /* 100% / 7 days = equal width columns */
+  height: 140px;
+}
 
+/* Calendar headers (weekdays) */
 .rbc-header {
+  background-color: #374151;
+  color: #f9fafb;
+  font-weight: 600;
+  padding: 12px 8px;
+  border-bottom: 2px solid #4b5563;
+  border-right: 1px solid #4b5563;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rbc-header:last-child {
+  border-right: none;
+}
+
+/* Calendar grid - SQUARE CELLS */
+.rbc-month-view {
   background-color: #1f2937;
-  color: white
 }
 
-.rbc.calendar {
-  background-color: #7eb2e6;
+.rbc-month-view .rbc-row-bg {
+  display: flex;
+  height: 140px; /* Fixed height for all rows */
+  border-bottom: 1px solid #374151;
 }
 
-.rbc-show-more {
-  color: black !important;
-  font-weight:400;
+.rbc-month-view .rbc-day-bg {
+  flex: 1;
+  background-color: #111827 !important;
+  border-right: 1px solid #374151;
+  position: relative;
+  height: 140px; /* Match row height */
+  width: 140px; /* Force square aspect ratio */
+  min-width: 140px;
+  max-width: 140px;
+  aspect-ratio: 1/1; /* Modern CSS for perfect squares */
 }
 
-/* Customize the popup background color */
-.rbc-overlay {
-  background-color: #1f2937; /* Change to your desired background color */
-  color: white; /* Change to your desired text color */
-  border-radius: 8px; /* Optional: Add border radius */
-  padding: 10px; /* Optional: Add padding */
+.rbc-month-view .rbc-day-bg:last-child {
+  border-right: none;
 }
 
-/* Customize the popup event item background color */
-.rbc-overlay .rbc-event {
-  background-color: #4a5568; /* Change to your desired event background color */
-  color: white !important; /* Change to your desired event text color */
-  border-radius: 4px; /* Optional: Add border radius */
-  padding: 5px; /* Optional: Add padding */
+.rbc-month-view .rbc-day-bg:hover {
+  background-color: #1f2937 !important;
 }
 
-/* Customize the popup event item hover state */
-.rbc-overlay .rbc-event:hover {
-  background-color: #2d3748; /* Change to your desired hover background color */
-  color: #a78df8 !important; /* Change to your desired hover text color */
+/* Date cells and content */
+.rbc-month-view .rbc-date-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px;
+  color: #d1d5db;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
-/* JournalCalendar.css */
+.rbc-month-view .rbc-date-cell:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Date number buttons - Enhanced visibility */
 .rbc-date-header-btn {
   position: absolute;
-  top: 2px;
+  top: 6px;
   right: 6px;
-  z-index: 2;
-  font-weight: normal;
+  z-index: 20 !important;
+  font-weight: 600 !important;
   cursor: pointer;
-  background: rgba(255,255,255,0);
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 1em;
-  border: none;
-  /* Add drop shadow */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Adjust values as needed */
+  background: rgba(55, 65, 81, 0.8) !important;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  border: 1px solid #4b5563;
+  color: #f3f4f6 !important;
+  transition: all 0.2s ease;
+  min-width: 24px;
+  text-align: center;
+  line-height: 1.2;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rbc-date-header-btn:hover {
+  background-color: #4b5563 !important;
+  color: #60a5fa !important;
+  transform: scale(1.08);
+  border-color: #60a5fa;
+  box-shadow: 0 4px 8px rgba(96, 165, 250, 0.2);
 }
 
 .rbc-date-header-btn.today {
-  font-weight: bold;
-  color: #1976d2;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background-color: #2563eb !important;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
 }
 
-/* This rule is likely redundant for the date number itself
-   if the rule below is used, but might affect other elements
-   within the cell if they inherit color. */
-.rbc-month-view .rbc-date-cell.has-trades,
-.rbc-month-view .rbc-date-cell.has-trades * {
-  color: black !important;
+/* Event container */
+.rbc-month-view .rbc-row-content {
+  margin-top: 28px;
+  flex: 1;
+  overflow: visible;
 }
 
-/* This rule will now correctly set the date number color to black on days with trades */
-.rbc-month-view .rbc-date-cell.has-trades .rbc-date-header-btn {
-  color: black !important;
+.rbc-month-view .rbc-row-segment {
+  margin-bottom: 2px;
 }
 
-/* Ensure the event container is visible and has space */
-.rbc-month-view .rbc-day-cell .rbc-row-segment {
-  display: block !important; /* Make sure it's not hidden */
-  min-height: 20px; /* Give it some minimum height */
-  overflow: visible; /* Ensure content isn't clipped */
-  /* Add borders temporarily to see its area */
-  /* border: 1px solid green !important; */
+/* Event styling */
+.rbc-event {
+  background-color: #374151 !important;
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  color: #f3f4f6 !important;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 6px;
+  margin: 1px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 5;
+  min-height: 16px;
+  display: block !important;
 }
 
-/* Ensure the +X more link is visible */
+.rbc-event:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 15;
+}
+
+.rbc-event * {
+  color: #f3f4f6 !important;
+}
+
+.rbc-event:hover * {
+  color: #ffffff !important;
+}
+
+/* Trading day overlays */
+.rbc-month-view .rbc-day-bg.profit-day::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #10b98115, #059f4610);
+  border: 1px solid #10b98150;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rbc-month-view .rbc-day-bg.loss-day::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ef444415, #dc262610);
+  border: 1px solid #ef444450;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Show more button */
 .rbc-show-more {
-  display: block !important; /* Make sure it's not hidden */
-  /* Add borders temporarily to see its area */
-  /* border: 1px solid purple !important; */
+  color: #60a5fa !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem;
+  background-color: #1e40af20;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+  display: block !important;
+  text-align: center;
 }
 
-/* Adjust padding/margin on the cell if needed */
-.rbc-month-view .rbc-day-cell {
-  padding-top: 20px; /* Add padding to make space below the date header/button */
-  /* Add borders temporarily to see its area */
-  /* border: 1px solid red !important; */
+.rbc-show-more:hover {
+  background-color: #1e40af40;
+  color: #93c5fd !important;
+}
+
+/* Popup overlay styling */
+.rbc-overlay {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  padding: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+}
+
+.rbc-overlay .rbc-event {
+  background-color: #374151;
+  color: #f9fafb !important;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 4px 0;
+}
+
+.rbc-overlay .rbc-event:hover {
+  background-color: #4b5563;
+  color: #60a5fa !important;
+}
+
+/* Current month vs other month styling */
+.rbc-off-range-bg {
+  background-color: #0f172a !important;
+}
+
+.rbc-off-range .rbc-date-header-btn {
+  color: #64748b;
+}
+
+/* Weekend styling */
+.rbc-month-view .rbc-day-bg:nth-child(7n),
+.rbc-month-view .rbc-day-bg:nth-child(7n-1) {
+  background-color: #0f172a !important;
+}
+
+/* Selection highlighting */
+.rbc-day-bg.rbc-selected-cell {
+  background-color: #1e40af40 !important;
+  border-color: #60a5fa !important;
+}
+
+/* Force consistent backgrounds */
+.rbc-calendar .rbc-header {
+  background-color: #374151 !important;
+}
+
+.rbc-calendar .rbc-month-view .rbc-day-bg {
+  background-color: #111827 !important;
+}
+
+.rbc-calendar .rbc-event {
+  background-color: #374151 !important;
 }

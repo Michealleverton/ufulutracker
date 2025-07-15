@@ -16,6 +16,7 @@ import {
   Edit,
   Check,
   X,
+  Brain,
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { supabase } from "../../../lib/supabase";
@@ -230,6 +231,7 @@ const Dashboard = () => {
       : []),
     { icon: ChartColumnStacked, label: "Charts", path: "/dashboard/charts" },
     { icon: BarChart2, label: "Analytics", path: "/dashboard/analytics" },
+    { icon: Brain, label: "AI Insights", path: "/dashboard/ai-insights" },
     { icon: History, label: "Trades", path: "/dashboard/trades" },
     { icon: Calendar1, label: "Calendar", path: "/dashboard/journal" },
     {
@@ -516,12 +518,12 @@ const Dashboard = () => {
       </div>
 
       {/* AI Assistant Button */}
-      <button
+      {/* <button
         className="fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full shadow-lg z-50 transition-all duration-200 transform hover:scale-105"
         onClick={toggleChatWindow}
       >
         AI Assistant
-      </button>
+      </button> */}
 
       {/* Chat Window */}
 

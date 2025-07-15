@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { supabase } from "../lib/supabase";
 import CustomToolbar from "./CustomToolbar";
-import "../css/JournalCalendar.css";
 import "../css/Loader.css";
 import { useStrategyContext } from "../Context/StrategyContext";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "../css/JournalCalendar.css"; // Load our CSS AFTER react-big-calendar CSS
 
 const localizer = momentLocalizer(moment);
 
@@ -21,7 +21,11 @@ interface TradeEntry {
   notes: string;
 }
 
-const JournalCalendar: React.FC = () => {
+export interface JournalCalendarRef {
+  openNewTradeModal: (date: Date) => void;
+}
+
+const JournalCalendar = forwardRef<JournalCalendarRef>((_, ref) => {
   const [entries, setEntries] = useState<TradeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { activeStrategy, user } = useStrategyContext();
@@ -174,6 +178,21 @@ const JournalCalendar: React.FC = () => {
     setModalOpen(true);
   };
 
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    openNewTradeModal
+  }));
+
+  // Helper function to format currency
+  const formatCurrency = (value: number | undefined) => {
+    if (value === undefined || value === null) return "$0.00";
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(value);
+  };
+
   // Helper function to reset form fields
   const resetForm = () => {
     setSymbol("");
@@ -194,16 +213,40 @@ const JournalCalendar: React.FC = () => {
 
   const eventStyleGetter = (event: any) => {
     const profit = event.resource.profit;
-    const borderColor = profit > 0 ? "green" : profit < 0 ? "red" : "gray";
-    const style = {
-      border: `2px solid ${borderColor}`,
-      backgroundColor: "transparent",
-      color: "black",
-      borderRadius: "3px",
-      padding: "2px",
-      paddingLeft: "5px",
-      fontSize: "0.9em",
-    };
+    let style;
+    
+    if (profit > 0) {
+      style = {
+        backgroundColor: '#10b98120',
+        border: '1px solid #10b981',
+        color: '#f3f4f6', // Light gray/white text instead of green
+        borderRadius: '6px',
+        padding: '2px 6px',
+        fontSize: '0.75rem',
+        fontWeight: '500',
+      };
+    } else if (profit < 0) {
+      style = {
+        backgroundColor: '#ef444420',
+        border: '1px solid #ef4444',
+        color: '#f3f4f6', // Light gray/white text instead of red
+        borderRadius: '6px',
+        padding: '2px 6px',
+        fontSize: '0.75rem',
+        fontWeight: '500',
+      };
+    } else {
+      style = {
+        backgroundColor: '#374151',
+        border: '1px solid #4b5563',
+        color: '#f3f4f6', // Light gray/white text
+        borderRadius: '6px',
+        padding: '2px 6px',
+        fontSize: '0.75rem',
+        fontWeight: '500',
+      };
+    }
+    
     return { style };
   };
 
@@ -216,16 +259,35 @@ const JournalCalendar: React.FC = () => {
         entryDate.getDate() === date.getDate()
       );
     });
+    
     const totalProfit = dayTrades.reduce((sum, trade) => sum + trade.profit, 0);
-    let style = {};
+    
+    // FORCE ALL DAYS TO HAVE DARK BACKGROUND
+    let style: any = {
+      backgroundColor: '#111827',
+      background: '#111827',
+    };
     let className = "";
-    if (dayTrades.length > 0) {
+    
+    // Only add border styling for profitable or loss days
+    if (dayTrades.length > 0 && totalProfit > 0) {
       style = {
-        backgroundColor: totalProfit > 0 ? "#90EE90" : "#FFB6C1",
-        border: "1px solid black",
+        backgroundColor: '#111827',
+        background: '#111827',
+        border: '2px solid #10b981',
+        borderRadius: '8px',
       };
-      className = "has-trades";
+      className = "has-trades profit-day";
+    } else if (dayTrades.length > 0 && totalProfit < 0) {
+      style = {
+        backgroundColor: '#111827',
+        background: '#111827',
+        border: '2px solid #ef4444',
+        borderRadius: '8px',
+      };
+      className = "has-trades loss-day";
     }
+    
     return { style, className };
   };
 
@@ -244,7 +306,7 @@ const JournalCalendar: React.FC = () => {
   // Show loading or no strategy message
   if (!user || !activeStrategy) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 text-white">
+      <div className="flex flex-col items-center justify-center py-24 text-white">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">
             {!user ? "Please log in to view calendar" : "No active strategy selected"}
@@ -261,112 +323,132 @@ const JournalCalendar: React.FC = () => {
   }
 
   return (
-    <div className="px-10">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-white mb-2">Trading Calendar - {activeStrategy.name}</h1>
-        {/* <p className="text-gray-400">View and manage your trades for this strategy</p> */}
-        <p className="text-gray-400">Click the day you want to add a new trade. </p>
-        <p className="text-gray-400">Click on a trade to update it</p>
+    <div className="p-0">
+      {/* Calendar Wrapper */}
+      <div className="bg-gray-800/50 rounded-lg overflow-hidden">
+        <Calendar
+          localizer={localizer}
+          events={entries.map((entry) => ({
+            title: `${entry.symbol}: ${formatCurrency(entry.profit)}`, // Show symbol and profit
+            start: new Date(entry.date),
+            end: new Date(entry.date),
+            allDay: true,
+            resource: entry,
+          }))}
+          startAccessor="start"
+          endAccessor="end"
+          selectable={false}
+          style={{ height: 650, color: "white" }}
+          components={{
+            toolbar: CustomToolbar,
+            month: {
+              dateHeader: (props) => <CustomDateHeader {...props} />,
+            },
+          }}
+          eventPropGetter={eventStyleGetter}
+          dayPropGetter={dayPropGetter}
+          popup={true}
+          showMultiDayTimes={true}
+          onSelectEvent={handleSelectEvent} // Handle event selection
+        />
       </div>
-      <Calendar
-        localizer={localizer}
-        events={entries.map((entry) => ({
-          title: `${entry.profit}`, // Show price as event title
-          start: new Date(entry.date),
-          end: new Date(entry.date),
-          allDay: true,
-          resource: entry,
-        }))}
-        startAccessor="start"
-        endAccessor="end"
-        selectable={false}
-        style={{ height: 700, color: "white", padding: 20, borderRadius: 10 }}
-        components={{
-          toolbar: CustomToolbar,
-          month: {
-            dateHeader: (props) => <CustomDateHeader {...props} />,
-          },
-        }}
-        eventPropGetter={eventStyleGetter}
-        dayPropGetter={dayPropGetter}
-        popup={true}
-        showMultiDayTimes={true}
-        onSelectEvent={handleSelectEvent} // Handle event selection
-      />
 
-      {/* Modal for adding new trade entry */}
+      {/* Modern Modal for adding/editing trades */}
       {modalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-gradient-border">
-            <div className="modal-content modal-flex">
-              <h2 className="modal-title">
-                {editingTradeId ? "Edit Trade" : "Add Trade"} for {modalDate?.toLocaleDateString()}
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-1">
+                {editingTradeId ? "Edit Trade" : "Add New Trade"}
               </h2>
-              <form
-                className="modal-form"
-                onSubmit={e => {
-                  e.preventDefault();
-                  handleSaveNewEntry();
-                }}
-                autoComplete="off"
-              >
-                <div className="modal-col">
-                  <label>
-                    <span className="modal-label">Symbol</span>
+              <p className="text-gray-400 text-sm">
+                {modalDate?.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+
+            {/* Modal Content */}
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                handleSaveNewEntry();
+              }}
+              className="p-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Symbol *
+                    </label>
                     <input
-                      className="modal-input"
                       type="text"
                       value={symbol}
-                      onChange={e => setSymbol(e.target.value)}
-                      autoFocus
-                      required
+                      onChange={e => setSymbol(e.target.value.toUpperCase())}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., AAPL, EURUSD"
                       maxLength={10}
+                      required
+                      autoFocus
                     />
-                  </label>
-                  <label>
-                    <span className="modal-label">Type</span>
+                  </div>
+
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Trade Type *
+                    </label>
                     <select
-                      className="modal-input"
                       value={type}
                       onChange={e => setType(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                     >
                       <option value="">Select Type</option>
                       <option value="buy">Buy</option>
                       <option value="sell">Sell</option>
                     </select>
-                  </label>
-                  <label>
-                    <span className="modal-label">Quantity</span>
+                  </div>
+
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Quantity *
+                    </label>
                     <input
-                      className="modal-input"
                       type="number"
                       value={quantity || ''}
                       onChange={e => {
                         const value = e.target.value;
-                        // Allow empty string or valid numbers
                         if (value === '' || !isNaN(Number(value))) {
                           setQuantity(value === '' ? 0 : Number(value));
                         }
                       }}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0"
                       min={0}
                       step="any"
-                      placeholder="0"
                       required
                     />
-                  </label>
+                  </div>
                 </div>
-                <div className="modal-col">
-                  <label>
-                    <span className="modal-label">Price</span>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Price *
+                    </label>
                     <input
-                      className="modal-input"
                       type="number"
                       value={priceInput}
                       onChange={e => {
                         const value = e.target.value;
                         setPriceInput(value);
-                        // Update the numeric price state
                         if (value === '') {
                           setPrice(0);
                         } else {
@@ -376,178 +458,74 @@ const JournalCalendar: React.FC = () => {
                           }
                         }
                       }}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0.00"
                       min={0}
                       step="any"
-                      placeholder="0.00000"
                       required
                     />
-                  </label>
-                  <label>
-                    <span className="modal-label">Profit</span>
+                  </div>
+
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Profit/Loss *
+                    </label>
                     <input
-                      className="modal-input"
                       type="number"
                       value={profit || ''}
                       onChange={e => {
                         const value = e.target.value;
-                        // Allow empty string or valid numbers (including negative for losses)
                         if (value === '' || !isNaN(Number(value))) {
                           setProfit(value === '' ? 0 : Number(value));
                         }
                       }}
-                      step="any"
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="0.00"
+                      step="any"
                       required
                     />
-                  </label>
-                  <label>
-                    <span className="modal-label">Notes</span>
+                  </div>
+
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Notes
+                    </label>
                     <textarea
-                      className="modal-input"
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      placeholder="Add trade notes (optional)"
                       rows={3}
                       maxLength={200}
-                      placeholder="Add notes (optional)"
                     />
-                  </label>
+                  </div>
                 </div>
-                <div className="modal-actions">
-                  <button className="modal-btn modal-btn-primary" type="submit">
-                    Save
-                  </button>
-                  <button
-                    className="modal-btn modal-btn-secondary"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-700">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors border border-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  {editingTradeId ? "Update Trade" : "Save Trade"}
+                </button>
+              </div>
+            </form>
           </div>
-          <style>{`
-            .modal-overlay {
-              position: fixed;
-              top: 0; left: 0; right: 0; bottom: 0;
-              background: rgba(30, 41, 59, 0.7);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              z-index: 1000;
-            }
-            .modal-gradient-border {
-              padding: 3px;
-              border-radius: 18px;
-              background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.2) 100%);
-              display: inline-block;
-            }
-            .modal-content {
-              background: #181f2a;
-              color: #f3f4f6;
-              border-radius: 14px;
-              box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-              padding: 2rem 2.5rem 1.5rem 2.5rem;
-              min-width: 340px;
-              max-width: 540px;
-              width: 95vw;
-              display: flex;
-              flex-direction: column;
-              gap: 0.5rem;
-            }
-            .modal-title {
-              font-size: 1.3rem;
-              font-weight: 600;
-              margin-bottom: 1.2rem;
-              letter-spacing: 0.02em;
-              color: #60a5fa;
-              text-align: center;
-            }
-            .modal-form {
-              display: flex;
-              flex-direction: row;
-              gap: 2rem;
-              flex-wrap: wrap;
-            }
-            .modal-col {
-              flex: 1 1 0;
-              min-width: 140px;
-              display: flex;
-              flex-direction: column;
-              gap: 1rem;
-            }
-            .modal-label {
-              font-size: 0.98em;
-              font-weight: 500;
-              margin-bottom: 0.2em;
-              color: #cbd5e1;
-              display: block;
-            }
-            .modal-input {
-              width: 100%;
-              padding: 0.5em 0.7em;
-              border-radius: 6px;
-              border: 1.5px solid #334155;
-              background: #232b3b;
-              color: #f3f4f6;
-              font-size: 1em;
-              transition: border 0.2s;
-              outline: none;
-              resize: none;
-            }
-            .modal-input:focus {
-              border-color: #60a5fa;
-              background: #1e293b;
-            }
-            .modal-actions {
-              display: flex;
-              justify-content: flex-end;
-              gap: 1rem;
-              width: 100%;
-              margin-top: 1.5rem;
-              grid-column: 1 / span 2;
-            }
-            .modal-btn {
-              padding: 0.55em 1.5em;
-              border-radius: 6px;
-              border: none;
-              font-size: 1em;
-              font-weight: 500;
-              cursor: pointer;
-              transition: background 0.18s, color 0.18s;
-            }
-            .modal-btn-primary {
-              background: #2563eb;
-              color: #fff;
-            }
-            .modal-btn-primary:hover {
-              background: #1d4ed8;
-            }
-            .modal-btn-secondary {
-              background: #334155;
-              color: #cbd5e1;
-            }
-            .modal-btn-secondary:hover {
-              background: #475569;
-              color: #fff;
-            }
-            @media (max-width: 600px) {
-              .modal-content {
-                padding: 1.2rem 0.5rem;
-                min-width: 90vw;
-                max-width: 98vw;
-              }
-              .modal-form {
-                flex-direction: column;
-                gap: 0.5rem;
-              }
-            }
-          `}</style>
         </div>
       )}
     </div>
   );
-};
+});
+
+JournalCalendar.displayName = 'JournalCalendar';
 
 export default JournalCalendar;

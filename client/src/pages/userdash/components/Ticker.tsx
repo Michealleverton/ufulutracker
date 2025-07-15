@@ -49,10 +49,21 @@ export const Ticker = () => {
   const duration = contentWidth ? `${contentWidth / 50}s` : "20s";
 
   const getPercentChange = (price: number | null, prevClose: number | null) => {
-    if (!price || !prevClose) return "Closed";
+    if (!price || !prevClose) return "N/A";
     const change = ((price - prevClose) / prevClose) * 100;
-    if (change === 0) return "Closed";
     return `${change > 0 ? "+" : ""}${change.toFixed(2)}%`;
+  };
+
+  const isMarketOpen = () => {
+    const now = new Date();
+    const eastern = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+    const day = eastern.getDay(); // 0 = Sunday, 6 = Saturday
+    const hours = eastern.getHours();
+    const minutes = eastern.getMinutes();
+    const time = hours * 100 + minutes;
+    
+    // Monday to Friday, 9:30 AM to 4:00 PM Eastern
+    return day >= 1 && day <= 5 && time >= 930 && time < 1600;
   };
 
   return (
@@ -63,6 +74,9 @@ export const Ticker = () => {
           "inset 20px 0 20px -20px rgba(0,0,0,0.5), inset -20px 0 20px -20px rgba(0,0,0,0.5)",
       }}
     >
+      <div className="absolute left-4 top-2 text-xs text-gray-400">
+        US Market: {isMarketOpen() ? "🟢 OPEN" : "🔴 CLOSED"}
+      </div>
       <div
         ref={contentRef}
         className="flex whitespace-nowrap"

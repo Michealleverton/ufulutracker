@@ -9,6 +9,9 @@ export interface Trade {
   quantity: number;
   profit?: number;
   notes?: string;
+  entry_price?: number;
+  exit_price?: number;
+  trade_time?: string;
   created_at?: string;
   updated_at?: string;
 }

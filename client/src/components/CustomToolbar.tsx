@@ -13,82 +13,111 @@ const CustomToolbar = (toolbar: ToolbarProps) => {
     toolbar.onNavigate("TODAY");
   };
 
-  const label = () => {
+  const formatLabel = () => {
     const date = new Date(toolbar.date);
     const month = date.toLocaleString("default", { month: "long" });
     const year = date.getFullYear();
     return `${month} ${year}`;
   };
 
-  const buttonStyle = {
-    backgroundColor: "#1f2937",
-    color: "#fff",
-    border: "red",
-    padding: "10px",
-    borderRadius: "5px",
-    margin: "0 5px",
-    boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
-    cursor: "pointer",
-  };
-
-  const buttonHoverStyle = {
-    ...buttonStyle,
-    ":hover": {
-      backgroundColor: "blue",
-      color: "white",
-    },
-  };
+  const isActiveView = (view: string) => toolbar.view === view;
 
   return (
-    <div
-      className="rbc-toolbar"
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: "20px",
-      }}
-    >
-      <div className="rbc-btn-group">
-        <button type="button" onClick={goToBack} style={buttonHoverStyle}>
-          Back
-        </button>
-        <button type="button" onClick={goToToday} style={buttonStyle}>
-          Current
-        </button>
-        <button type="button" onClick={goToNext} style={buttonStyle}>
-          Next
-        </button>
+    <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-white">
+          Trading Calendar
+        </h2>
+        <p className="text-gray-400 text-lg font-medium mt-1">
+          {formatLabel()}
+        </p>
       </div>
-      <span
-        className="rbc-toolbar-label"
-        style={{ fontSize: "20px", fontWeight: "bold" }}
-      >
-        <span className="text-3xl capitalize">Trading Calendar</span>
-        <br />
-        {label()}
-      </span>
-      <div className="rbc-btn-group">
-        <button
-          type="button"
-          onClick={() => toolbar.onView("month")}
-          style={buttonStyle}
-        >
-          Month
-        </button>
-        <button
-          type="button"
-          onClick={() => toolbar.onView("week")}
-          style={buttonStyle}
-        >
-          Week
-        </button>
-        <button
-          type="button"
-          onClick={() => toolbar.onView("day")}
-          style={buttonStyle}
-        >
-          Day
-        </button>
+
+      {/* Navigation and View Controls */}
+      <div className="flex items-center justify-between">
+        {/* Left Side - Navigation Controls */}
+        <div className="flex items-center gap-2">
+          {/* Previous Button */}
+          <button
+            type="button"
+            onClick={goToBack}
+            className="flex items-center justify-center w-10 h-10 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors"
+            title="Previous"
+          >
+            <svg 
+              className="w-5 h-5 text-gray-300" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Today Button */}
+          <button
+            type="button"
+            onClick={goToToday}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Today
+          </button>
+
+          {/* Next Button */}
+          <button
+            type="button"
+            onClick={goToNext}
+            className="flex items-center justify-center w-10 h-10 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors"
+            title="Next"
+          >
+            <svg 
+              className="w-5 h-5 text-gray-300" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Right Side - View Toggle Buttons */}
+        <div className="flex bg-gray-700 rounded-lg p-1 border border-gray-600">
+          <button
+            type="button"
+            onClick={() => toolbar.onView("month")}
+            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              isActiveView("month")
+                ? "bg-blue-600 text-white"
+                : "text-gray-300 hover:text-white hover:bg-gray-600"
+            }`}
+          >
+            Month
+          </button>
+          <button
+            type="button"
+            onClick={() => toolbar.onView("week")}
+            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              isActiveView("week")
+                ? "bg-blue-600 text-white"
+                : "text-gray-300 hover:text-white hover:bg-gray-600"
+            }`}
+          >
+            Week
+          </button>
+          <button
+            type="button"
+            onClick={() => toolbar.onView("day")}
+            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              isActiveView("day")
+                ? "bg-blue-600 text-white"
+                : "text-gray-300 hover:text-white hover:bg-gray-600"
+            }`}
+          >
+            Day
+          </button>
+        </div>
       </div>
     </div>
   );

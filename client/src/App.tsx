@@ -22,6 +22,7 @@ const Settings = React.lazy(() => import('./pages/userdash/pages/Settings'));
 const Tradingplan = React.lazy(() => import('./pages/userdash/pages/Tradingplan'));
 const NewsPage = React.lazy(() => import('./pages/userdash/pages/News'));
 const Charts = React.lazy(() => import('./pages/userdash/pages/Charts'));
+const AIInsights = React.lazy(() => import('./pages/userdash/pages/AIInsights'));
 // const Overview = React.lazy(() => import('./pages/userdash/pages/Overview')); // Uncomment if needed
 
 export default function App() {
@@ -71,6 +72,7 @@ export default function App() {
             }>
               <Route index element={<Analytics />} />
               <Route path="analytics" element={<Analytics />} />
+              <Route path="ai-insights" element={<AIInsights />} />
               <Route path="journal" element={<Journal />} />
               <Route path="trades" element={<Trades />} />
               <Route path="settings" element={<Settings />} />

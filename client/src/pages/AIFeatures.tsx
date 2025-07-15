@@ -30,24 +30,7 @@ export const AIFeatures = () => {
         <div className="text-center mb-16">
           <Bot className="h-16 w-16 text-indigo-400 mx-auto mb-6" />
           {/* Under Construction Sign */}
-          <div className="relative w-full max-w-3xl mx-auto h-16 mb-6">
-            {/* Stripes background */}
-            <div
-              className="absolute inset-0 rounded-md"
-              style={{
-                backgroundImage:
-                  "repeating-linear-gradient(135deg, #222 0 16px, #facc15 16px 32px)",
-              }}
-            />
-            {/* Yellow overlay for construction sign effect */}
-            <div className="absolute inset-0 bg-yellow-300 bg-opacity-80 rounded-md" />
-            {/* Text */}
-            <div className="relative z-10 flex items-center justify-center h-full">
-              <span className="text-2xl sm:text-3xl font-extrabold text-red-700 drop-shadow-lg tracking-wide">
-                Temporarily Under Construction
-              </span>
-            </div>
-          </div>
+
           <h2 className="text-3xl font-bold text-white mb-4">Your Personal Trading AI Assistant</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Meet your AI trading companion that learns from your trading style and helps you make better decisions.

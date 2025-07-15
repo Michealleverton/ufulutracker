@@ -1,8 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from "react";
 // import axios from "axios";
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -16,12 +14,13 @@ import {
   ArrowDownRight,
   DollarSign,
   TrendingUp,
-  GripVertical,
+  ChevronDown,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { ChartCard } from "../components/ChartCard";
 import { StatCardModal } from "../components/StatCardModal";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import {
   fetchWeeklyData,
   fetchTotalProfitLoss,
@@ -30,13 +29,26 @@ import {
   fetchWorstTrade,
   fetchEquityCurveData,
   fetchMonthlyProfitLossData,
+  fetchBestMonth,
+  fetchWorstMonth,
+  fetchAvgTradesPerDay,
+  fetchRiskRewardRatio,
+  fetchMaxDrawdown,
+  fetchProfitFactor,
+  fetchConsecutiveStreaks,
+  fetchTradingHeatmapData,
+  fetchTimeOfDayPerformanceData,
+  fetchRiskRewardScatterData,
+  fetchSymbolBreakdownData,
 } from "../helpers/analyticsHelpers";
 import "../../../styles.css";
 import { supabase } from "../../../lib/supabase";
-import { useTheme } from "../../../Context/ThemeContext";
 import { useStrategyContext } from "../../../Context/StrategyContext";
-import { Ticker } from "../components/Ticker";
-import { ForexTicker } from "../components/ForexTicker";
+import TradingHeatmap from "../components/TradingHeatmap";
+import TimeOfDayPerformance from "../components/TimeOfDayPerformance";
+import RiskRewardScatter from "../components/RiskRewardScatter";
+import SymbolBreakdown from "../components/SymbolBreakdown";
+import MonthlyProfitLoss from "../components/MonthlyProfitLoss";
 
 const GrossDailyPLGraph = lazy(() => import("../components/GrossDailyPLGraph"));
 
@@ -44,7 +56,6 @@ const GrossDailyPLGraph = lazy(() => import("../components/GrossDailyPLGraph"));
 // const ALPHA_VANTAGE_API_KEY = import.meta.env.VITE_VANTAGE_API_KEY;
 
 const Analytics = () => {
-  const { theme } = useTheme();
   const { activeStrategy, user } = useStrategyContext();
   const defaultStatCards = [
     {
@@ -70,7 +81,7 @@ const Analytics = () => {
     {
       id: "bestMonth",
       title: "Best Month",
-      value: "+$3,200",
+      value: "+$0.00",
       icon: ArrowUpRight,
       valueColor: "text-green-400",
       iconColor: "text-green-400",
@@ -80,7 +91,7 @@ const Analytics = () => {
     {
       id: "worstMonth",
       title: "Worst Month",
-      value: "-$800",
+      value: "-$0.00",
       icon: ArrowDownRight,
       valueColor: "text-red-400",
       iconColor: "text-red-400",
@@ -110,7 +121,7 @@ const Analytics = () => {
     {
       id: "avgTradesPerDay",
       title: "Avg. Trades Per Day",
-      value: "2.46",
+      value: "0.00",
       icon: ArrowDownRight,
       valueColor: "text-indigo-400",
       iconColor: "text-indigo-400",
@@ -120,10 +131,50 @@ const Analytics = () => {
     {
       id: "R2RRatio",
       title: "R:R Ratio",
-      value: "2.21",
+      value: "0.00",
       icon: ArrowDownRight,
       valueColor: "text-indigo-400",
       iconColor: "text-indigo-400",
+      visible: true,
+      dragHandleProps: {},
+    },
+    {
+      id: "maxDrawdown",
+      title: "Max Drawdown",
+      value: "-$0.00 (0%)",
+      icon: ArrowDownRight,
+      valueColor: "text-red-400",
+      iconColor: "text-red-400",
+      visible: true,
+      dragHandleProps: {},
+    },
+    {
+      id: "profitFactor",
+      title: "Profit Factor",
+      value: "0.00",
+      icon: TrendingUp,
+      valueColor: "text-green-400",
+      iconColor: "text-green-400",
+      visible: true,
+      dragHandleProps: {},
+    },
+    {
+      id: "winStreak",
+      title: "Max Win Streak",
+      value: "0 trades",
+      icon: ArrowUpRight,
+      valueColor: "text-green-400",
+      iconColor: "text-green-400",
+      visible: true,
+      dragHandleProps: {},
+    },
+    {
+      id: "lossStreak",
+      title: "Max Loss Streak",
+      value: "0 trades",
+      icon: ArrowDownRight,
+      valueColor: "text-red-400",
+      iconColor: "text-red-400",
       visible: true,
       dragHandleProps: {},
     },
@@ -145,7 +196,6 @@ const Analytics = () => {
     return defaultStatCards;
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [weeklyData, setWeeklyData] = useState<
     { date: string; profit: number }[]
   >([]);
@@ -158,10 +208,57 @@ const Analytics = () => {
   >([]);
   const [startingBalance, setStartingBalance] = useState(10000); // Placeholder starting balance
   const [currentBalance, setCurrentBalance] = useState(0);
+  const [isEditingBalance, setIsEditingBalance] = useState(false);
   // const [marketData, setMarketData] = useState<string>("");
   const [dailyPLData, setDailyPLData] = useState<
     { date: string; profit: number }[]
   >([]);
+  
+  // New state for advanced charts
+  const [heatmapData, setHeatmapData] = useState<
+    { date: string; profit: number }[]
+  >([]);
+  const [timePerformanceData, setTimePerformanceData] = useState<
+    { date: string; profit: number; trade_time?: string }[]
+  >([]);
+  const [riskRewardData, setRiskRewardData] = useState<
+    { date: string; profit: number; entry_price: number; exit_price: number; quantity: number; type: string }[]
+  >([]);
+  const [symbolData, setSymbolData] = useState<
+    { symbol: string; profit: number }[]
+  >([]);
+
+  // Dashboard preset configurations
+  const dashboardPresets = {
+    "Pro Trader Complete": {
+      name: "Pro Trader Complete",
+      description: "All available metrics for comprehensive analysis",
+      visibleCards: ["total", "winRate", "bestMonth", "worstMonth", "bestTrade", "worstTrade", "avgTradesPerDay", "R2RRatio", "maxDrawdown", "profitFactor", "winStreak", "lossStreak"]
+    },
+    "Risk Management Focus": {
+      name: "Risk Management Focus",
+      description: "Focus on drawdowns, risk-reward ratios, and loss streaks",
+      visibleCards: ["total", "winRate", "R2RRatio", "maxDrawdown", "lossStreak", "worstTrade"]
+    },
+    "Psychology Focus": {
+      name: "Psychology Focus", 
+      description: "Track win/loss streaks and emotional trading patterns",
+      visibleCards: ["total", "winRate", "winStreak", "lossStreak", "bestTrade", "worstTrade"]
+    },
+    "Performance Tracker": {
+      name: "Performance Tracker",
+      description: "Monitor profit, win rates, and trading frequency",
+      visibleCards: ["total", "winRate", "bestMonth", "worstMonth", "avgTradesPerDay", "profitFactor"]
+    },
+    "Beginner Essentials": {
+      name: "Beginner Essentials",
+      description: "Essential metrics for new traders",
+      visibleCards: ["total", "winRate", "bestTrade", "worstTrade"]
+    }
+  };
+
+  const [selectedDashboard, setSelectedDashboard] = useState<string>("Pro Trader Complete");
+  const [isDashboardDropdownOpen, setIsDashboardDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (activeStrategy && user) {
@@ -169,11 +266,25 @@ const Analytics = () => {
       fetchWinRate(updateWinRateCard, user.id, activeStrategy.id);
       fetchBestTrade(updateBestTradeCard, user.id, activeStrategy.id);
       fetchWorstTrade(updateWorstTradeCard, user.id, activeStrategy.id);
+      fetchBestMonth(updateBestMonthCard, user.id, activeStrategy.id);
+      fetchWorstMonth(updateWorstMonthCard, user.id, activeStrategy.id);
+      fetchAvgTradesPerDay(updateAvgTradesPerDayCard, user.id, activeStrategy.id);
+      fetchRiskRewardRatio(updateRiskRewardRatioCard, user.id, activeStrategy.id);
+      fetchMaxDrawdown(updateMaxDrawdownCard, user.id, activeStrategy.id);
+      fetchProfitFactor(updateProfitFactorCard, user.id, activeStrategy.id);
+      fetchConsecutiveStreaks(updateConsecutiveStreaksCard, user.id, activeStrategy.id);
       fetchEquityCurveData(setEquityCurveData, user.id, activeStrategy.id);
       fetchMonthlyProfitLossData(setMonthlyProfitLossData, user.id, activeStrategy.id);
+      fetchDailyPLData();
+      
+      // Fetch data for new advanced charts
+      fetchTradingHeatmapData(setHeatmapData, user.id, activeStrategy.id);
+      fetchTimeOfDayPerformanceData(setTimePerformanceData, user.id, activeStrategy.id);
+      fetchRiskRewardScatterData(setRiskRewardData, user.id, activeStrategy.id);
+      fetchSymbolBreakdownData(setSymbolData, user.id, activeStrategy.id);
+      
       calculateCurrentBalance(); // Calculate current balance
       // fetchMarketData(); // Fetch market data
-      fetchDailyPLData();
     }
   }, [startingBalance, totalWeeklyProfit, activeStrategy, user]); // Recalculate when strategy/user changes
 
@@ -181,6 +292,19 @@ const Analytics = () => {
   useEffect(() => {
     updateTotalProfitLossCard();
   }, [currentBalance, startingBalance]);
+
+  // Close dashboard dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isDashboardDropdownOpen && !target.closest('.dashboard-dropdown')) {
+        setIsDashboardDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDashboardDropdownOpen]);
 
   useEffect(() => {
     // Save only the visibility state to keep storage small
@@ -235,6 +359,79 @@ const Analytics = () => {
     );
   };
 
+  const updateBestMonthCard = (profit: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "bestMonth"
+          ? { ...card, value: `+$${profit.toFixed(2)}` }
+          : card
+      )
+    );
+  };
+
+  const updateWorstMonthCard = (profit: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "worstMonth"
+          ? { ...card, value: `-$${Math.abs(profit).toFixed(2)}` }
+          : card
+      )
+    );
+  };
+
+  const updateAvgTradesPerDayCard = (avg: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "avgTradesPerDay"
+          ? { ...card, value: avg.toFixed(2) }
+          : card
+      )
+    );
+  };
+
+  const updateRiskRewardRatioCard = (ratio: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "R2RRatio"
+          ? { ...card, value: ratio.toFixed(2) }
+          : card
+      )
+    );
+  };
+
+  const updateMaxDrawdownCard = (drawdown: number, percentage: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "maxDrawdown"
+          ? { ...card, value: `-$${drawdown.toFixed(2)} (${percentage.toFixed(1)}%)` }
+          : card
+      )
+    );
+  };
+
+  const updateProfitFactorCard = (factor: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === "profitFactor"
+          ? { ...card, value: factor.toFixed(2) }
+          : card
+      )
+    );
+  };
+
+  const updateConsecutiveStreaksCard = (maxWinStreak: number, maxLossStreak: number) => {
+    setStatCards((prevCards) =>
+      prevCards.map((card) => {
+        if (card.id === "winStreak") {
+          return { ...card, value: `${maxWinStreak} trades` };
+        } else if (card.id === "lossStreak") {
+          return { ...card, value: `${maxLossStreak} trades` };
+        }
+        return card;
+      })
+    );
+  };
+
   const calculateTotalWeeklyProfit = (data: Trade[]) => {
     const total = data.reduce((acc, trade) => acc + trade.profit, 0);
     setTotalWeeklyProfit(total);
@@ -284,30 +481,6 @@ const Analytics = () => {
         card.id === id ? { ...card, visible: !card.visible } : card
       )
     );
-  };
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleCustomizeClick = () => {
-    setIsModalOpen(true);
-    handleMenuClose();
-  };
-
-  const resetVisibility = () => {
-    setStatCards((prevCards) =>
-      prevCards.map((card) => ({ ...card, visible: true }))
-    );
-  };
-
-  const handleResetClick = () => {
-    resetVisibility();
-    handleMenuClose();
   };
 
   const formatCurrency = (value: number) => {
@@ -382,128 +555,256 @@ const Analytics = () => {
         <h1 className="text-3xl font-bold text-white mb-2">{activeStrategy.name}</h1>
         <p className="text-gray-400">Track your trading performance for this strategy</p>
       </div>
-      <div>
-        <ForexTicker />
-      </div>
-      <div>
-        <Ticker />
+
+      {/* Account Balances */}
+      <div className="bg-gray-800 rounded-xl p-6 mb-6 border border-gray-700">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Starting Balance */}
+          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-gray-400 font-medium">Starting Balance</label>
+              {isEditingBalance ? (
+                <input
+                  type="text"
+                  value={formatCurrency(startingBalance)}
+                  onChange={(e) =>
+                    setStartingBalance(
+                      Number(e.target.value.replace(/[^0-9.-]+/g, ""))
+                    )
+                  }
+                  onFocus={(e) => e.target.select()}
+                  onBlur={() => setIsEditingBalance(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setIsEditingBalance(false);
+                    }
+                  }}
+                  className="bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  autoFocus
+                />
+              ) : (
+                <div 
+                  onClick={() => setIsEditingBalance(true)}
+                  className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
+                  title="Click to edit"
+                >
+                  {formatCurrency(startingBalance)}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Current Balance */}
+          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-gray-400 font-medium">Current Balance</label>
+              <div className="text-lg font-semibold text-green-400">
+                {formatCurrency(currentBalance)}
+              </div>
+            </div>
+          </div>
+
+          {/* Weekly P&L */}
+          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-gray-400 font-medium">This Week's P&L</label>
+              <div className={`text-lg font-semibold ${
+                totalWeeklyProfit >= 0 ? "text-green-400" : "text-red-400"
+              }`}>
+                {formatCurrency(totalWeeklyProfit)}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* <div className="ticker-container rounded-md">
-        <div className="ticker-content">{marketData}</div>
-      </div> */}
-      <div className="flex flex-col md:flex-row md:justify-between gap-4 px-2 py-2 bg-gray-800 rounded-md mt-4">
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <p className="text-[1.25rem] text-white ml-2">Starting Balance:</p>
-          <input
-            type="text"
-            value={formatCurrency(startingBalance)}
-            onChange={(e) =>
-              setStartingBalance(
-                Number(e.target.value.replace(/[^0-9.-]+/g, ""))
-              )
-            }
-            onFocus={(e) => e.target.select()}
-            className="bg-transparent text-[1.25rem] text-green-500 pl-2 rounded-lg focus:bg-gray-800 w-full max-w-[160px]"
-            style={{ width: `${formatCurrency(startingBalance).length}ch` }}
-          />
-        </div>
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <p className="text-[1.25rem] text-white">Current Balance:</p>
-          <p className="text-[1.25rem] text-white">
-            <span className="text-[1.25rem] text-green-500">
-              {formatCurrency(currentBalance)}
-            </span>
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <p className="text-[1.25rem] text-white">This Weeks P&L:</p>
-          <p className="text-[1.25rem] text-whit mr-2">
-            <span
-              className={`text-[1.25rem] ${
-                totalWeeklyProfit >= 0 ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {formatCurrency(totalWeeklyProfit)}
-            </span>
-          </p>
-        </div>
-      </div>
-      <p
-        className={`${
-          theme === "dark" ? "text-black" : "text-white"
-        } text-2xl ml-2 sm:ml-4 mt-8 mb-4`}
-      >
-        {new Date().toLocaleString("en-US", {
-          month: "short",
-          year: "numeric",
-        })}
-      </p>
 
-      <div className="flex flex-col md:flex-row mb-4 gap-4 md:gap-6">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"].map((day, index) => {
-          const dayData = weeklyData.filter(
-            (trade) => new Date(trade.date).getDay() === (index + 6) % 7
-          );
-          const dayProfit = dayData.reduce(
-            (acc, trade) => acc + trade.profit,
-            0
-          );
-          const currentDate = new Date();
-          const firstDayOfWeek = currentDate.getDate() - currentDate.getDay();
-          const dayOfMonth = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            firstDayOfWeek + index
-          ).getDate();
-          return (
-            <p
-              key={day}
-              className={`bg-gray-800 flex-1 w-full flex flex-col p-4 rounded-lg relative text-gray-200 ${
-                dayData.length ? "border-[1.5px] border-indigo-400" : ""
-              }`}
-            >
-              <span className="text-[1.5rem] font-bold mb-[0.7rem]">
-                {day} {dayOfMonth}
-              </span>
-              <span
-                className={`text-[1.25rem] ${
-                  dayProfit >= 0 ? "text-green-500" : "text-red-500"
+      {/* Weekly Trading Overview */}
+      <div className="bg-gray-800 rounded-xl p-6 mb-6 border border-gray-700">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-white mb-1">Weekly Performance</h3>
+          <p className="text-sm text-gray-400">
+            {new Date().toLocaleString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"].map((day, index) => {
+            const dayData = weeklyData.filter(
+              (trade) => new Date(trade.date).getDay() === (index + 6) % 7
+            );
+            const dayProfit = dayData.reduce(
+              (acc, trade) => acc + trade.profit,
+              0
+            );
+            const currentDate = new Date();
+            const firstDayOfWeek = currentDate.getDate() - currentDate.getDay();
+            const dayOfMonth = new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth(),
+              firstDayOfWeek + index
+            ).getDate();
+            
+            const hasActivity = dayData.length > 0;
+            
+            return (
+              <div
+                key={day}
+                className={`bg-gray-700/50 rounded-lg p-4 border transition-all duration-200 ${
+                  hasActivity 
+                    ? "border-blue-500 shadow-lg shadow-blue-500/20" 
+                    : "border-gray-600"
                 }`}
               >
-                {dayData.length ? `$${dayProfit.toFixed(2)}` : "$0.00"}
-              </span>
-              {dayData.length ? `${dayData.length} Trades` : "0 Trades"}
-            </p>
-          );
-        })}
+                <div className="text-center">
+                  <div className="text-sm text-gray-400 mb-1">{day}</div>
+                  <div className="text-lg font-bold text-white mb-2">{dayOfMonth}</div>
+                  <div className={`text-lg font-semibold mb-1 ${
+                    dayProfit >= 0 ? "text-green-400" : "text-red-400"
+                  }`}>
+                    {hasActivity ? formatCurrency(dayProfit) : "$0.00"}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {hasActivity ? `${dayData.length} trade${dayData.length > 1 ? 's' : ''}` : "No trades"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Trading Insights Overview */}
+      <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl p-6 mb-6 border border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-white mb-2">📊 Trading Overview</h2>
+            <p className="text-gray-400">Your performance snapshot and account growth</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-gray-400">Total Return</div>
+            <div className={`text-2xl font-bold ${
+              currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {((currentBalance - startingBalance) / startingBalance * 100).toFixed(1)}%
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-sm text-gray-400">Total Trades</div>
+                <div className="text-lg font-bold text-white">{weeklyData.length}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-green-400" />
+              </div>
+              <div>
+                <div className="text-sm text-gray-400">Account Growth</div>
+                <div className={`text-lg font-bold ${
+                  currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {formatCurrency(currentBalance - startingBalance)}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-sm text-gray-400">This Week</div>
+                <div className={`text-lg font-bold ${
+                  totalWeeklyProfit >= 0 ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {formatCurrency(totalWeeklyProfit)}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                <Clock className="h-5 w-5 text-orange-400" />
+              </div>
+              <div>
+                <div className="text-sm text-gray-400">Days Active</div>
+                <div className="text-lg font-bold text-white">
+                  {weeklyData.filter(day => day.profit !== 0).length}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mb-4 mt-10 overflow-x-auto">
-        <ChartCard title="Equity Curve">
+        <ChartCard title="🚀 Enhanced Equity Curve">
           <div className="w-full" style={{ minWidth: 0 }}>
             <ResponsiveContainer width="100%" height={340}>
               <LineChart data={equityCurveData}>
-                <CartesianGrid stroke="#ccc" />
-                <XAxis dataKey="date" tick={{ fill: "#1f2937" }} />
-                <YAxis />
+                <defs>
+                  <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.05}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                  axisLine={{ stroke: "#6B7280" }}
+                />
+                <YAxis 
+                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                  axisLine={{ stroke: "#6B7280" }}
+                  tickFormatter={(value) => `$${value.toFixed(0)}`}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#333",
-                    borderRadius: "6px",
+                    backgroundColor: "#1F2937",
+                    border: "1px solid #374151",
+                    borderRadius: "8px",
                     color: "#fff",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
                   }}
-                  labelStyle={{ color: "#fff" }}
-                  wrapperStyle={{ backgroundColor: "transparent" }}
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                  labelStyle={{ color: "#D1D5DB" }}
+                  formatter={(value: number) => [
+                    `$${value.toFixed(2)}`,
+                    "Account Equity"
+                  ]}
+                  labelFormatter={(label) => `Date: ${label}`}
                 />
                 <Line
                   type="monotone"
                   dataKey="equity"
-                  stroke="#8884d8"
+                  stroke="#3B82F6"
                   strokeWidth={3}
                   dot={false}
-                  activeDot={{ r: 4 }}
+                  activeDot={{ 
+                    r: 6, 
+                    stroke: "#3B82F6", 
+                    strokeWidth: 2, 
+                    fill: "#1F2937" 
+                  }}
+                  fill="url(#equityGradient)"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -512,28 +813,58 @@ const Analytics = () => {
       </div>
 
       <div className="flex justify-start mb-4 font-white">
-        <IconButton onClick={handleMenuClick} sx={{ color: "gray" }}>
-          <GripVertical className="rotate-90" />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{
-            "& .MuiPaper-root": {
-              backgroundColor: "#1f2937",
-              color: "white",
-            },
-            "& .MuiMenuItem-root": {
-              "&:hover": {
-                backgroundColor: "#374151",
-              },
-            },
-          }}
-        >
-          <MenuItem onClick={handleCustomizeClick}>Customize</MenuItem>
-          <MenuItem onClick={handleResetClick}>Reset</MenuItem>
-        </Menu>
+        {/* Dashboard Selector Dropdown */}
+        <div className="relative dashboard-dropdown mt-8 mb-4">
+          <button
+            onClick={() => setIsDashboardDropdownOpen(!isDashboardDropdownOpen)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 hover:bg-gray-700 transition-colors"
+          >
+            <span className="text-sm font-medium">{selectedDashboard}</span>
+            <ChevronDown 
+              className={`w-4 h-4 transition-transform ${isDashboardDropdownOpen ? 'rotate-180' : ''}`} 
+            />
+          </button>
+          
+          {isDashboardDropdownOpen && (
+            <div className="absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+              {Object.entries(dashboardPresets).map(([key, preset]) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setSelectedDashboard(key);
+                    setIsDashboardDropdownOpen(false);
+                    // Apply dashboard preset
+                    setStatCards(prevCards => 
+                      prevCards.map(card => ({
+                        ...card,
+                        visible: preset.visibleCards.includes(card.id)
+                      }))
+                    );
+                  }}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700 ${
+                    selectedDashboard === key ? 'bg-gray-700' : ''
+                  }`}
+                >
+                  <div className="font-medium text-white">{preset.name}</div>
+                  <div className="text-sm text-gray-400 mt-1">{preset.description}</div>
+                </button>
+              ))}
+              
+              {/* Customize option at the bottom */}
+              <button
+                onClick={() => {
+                  setSelectedDashboard("Custom");
+                  setIsDashboardDropdownOpen(false);
+                  setIsModalOpen(true);
+                }}
+                className="w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-600"
+              >
+                <div className="font-medium text-white">Custom Dashboard</div>
+                <div className="text-sm text-gray-400 mt-1">Manually select which cards to display</div>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
@@ -547,29 +878,9 @@ const Analytics = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <ChartCard title="Gross Monthly P&L">
-          <div className="overflow-x-auto min-w-[350px] md:min-w-[500px]">
-            <BarChart width={500} height={300} data={monthlyProfitLossData}>
-              <CartesianGrid stroke="#ccc" />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: "#fff" }}
-                padding={{ left: 10, right: 10 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#333",
-                  borderRadius: "8px",
-                  color: "#fff",
-                }}
-                formatter={(value: number) => `$${value.toFixed(2)}`}
-              />
-              <Bar dataKey="profit" fill="#8884d8" />
-            </BarChart>
-          </div>
-        </ChartCard>
-
+      <div className="grid grid-cols-1 gap-6 mb-8">
+        <MonthlyProfitLoss data={monthlyProfitLossData} />
+        
         <Suspense
           fallback={
             <div className="text-white">Loading Gross Daily P&L...</div>
@@ -577,6 +888,33 @@ const Analytics = () => {
         >
           <GrossDailyPLGraph data={dailyPLData} />
         </Suspense>
+      </div>
+
+      {/* Advanced Analytics Section */}
+      <div className="mt-12 mb-8">
+        <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+          🚀 Advanced Analytics
+          <span className="text-sm text-gray-400 font-normal">Deep insights into your trading patterns</span>
+        </h2>
+        <p className="text-gray-400 mb-6">
+          Discover hidden patterns, optimize your performance, and gain a competitive edge with these advanced visualizations.
+        </p>
+      </div>
+
+      {/* Trading Heatmap */}
+      <div className="mb-8">
+        <TradingHeatmap data={heatmapData} />
+      </div>
+
+      {/* Advanced Charts Grid */}
+      <div className="space-y-8 mb-8">
+        <TimeOfDayPerformance data={timePerformanceData} />
+        <RiskRewardScatter data={riskRewardData} />
+      </div>
+
+      {/* Symbol Breakdown */}
+      <div className="mb-8">
+        <SymbolBreakdown data={symbolData} />
       </div>
 
       {isModalOpen && (

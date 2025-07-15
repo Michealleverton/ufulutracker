@@ -21,12 +21,12 @@ INSERT INTO strategies (user_id, name, description, is_active) VALUES
 
 WITH trade_data AS (
   SELECT 
-    'DUMMY_USER_ID_HERE' as user_id,
+    '3ef865e6-fe24-4790-82b9-43849900b549'::uuid as user_id,
     -- Rotate between 3 strategies
     CASE 
-      WHEN (row_number() OVER ()) % 3 = 1 THEN 'STRATEGY_1_ID_HERE'  -- EUR/USD Scalping
-      WHEN (row_number() OVER ()) % 3 = 2 THEN 'STRATEGY_2_ID_HERE'  -- GBP/USD Swing Trading  
-      ELSE 'STRATEGY_3_ID_HERE'  -- News Trading
+      WHEN (row_number() OVER ()) % 3 = 1 THEN '4d7872cc-1ed5-4e5f-af02-d60124179964'::uuid  -- EUR/USD Scalping
+      WHEN (row_number() OVER ()) % 3 = 2 THEN '6fb2dc98-e070-4e40-8a26-d2bd35fd15fe'::uuid  -- GBP/USD Swing Trading  
+      ELSE '58234a30-61fe-488b-b25e-3b546e2bef9e'::uuid  -- News Trading
     END as strategy_id,
     
     -- Generate dates over the last 90 days (avoiding weekends)
@@ -60,14 +60,11 @@ WITH trade_data AS (
       ELSE (random() * 1.0 + 0.2)::numeric(10,2) -- News: 0.2-1.2 lots
     END as quantity,
     
-    -- Realistic prices for each pair
+    -- Realistic prices for each pair (simplified approach)
     CASE 
-      WHEN (row_number() OVER ()) % 3 = 1 OR symbol = 'EURUSD' THEN (random() * 0.05 + 1.05)::numeric(10,5) -- EURUSD: 1.05-1.10
-      WHEN symbol = 'GBPUSD' THEN (random() * 0.08 + 1.25)::numeric(10,5) -- GBPUSD: 1.25-1.33
-      WHEN symbol = 'USDJPY' THEN (random() * 10 + 145)::numeric(10,3) -- USDJPY: 145-155
-      WHEN symbol = 'AUDUSD' THEN (random() * 0.05 + 0.65)::numeric(10,5) -- AUDUSD: 0.65-0.70
-      WHEN symbol = 'USDCHF' THEN (random() * 0.05 + 0.88)::numeric(10,5) -- USDCHF: 0.88-0.93
-      ELSE (random() * 0.05 + 0.85)::numeric(10,5) -- EURGBP: 0.85-0.90
+      WHEN (row_number() OVER ()) % 3 = 1 THEN (random() * 0.05 + 1.05)::numeric(10,5) -- Scalping: mostly EURUSD prices 1.05-1.10
+      WHEN (row_number() OVER ()) % 3 = 2 THEN (random() * 0.08 + 1.25)::numeric(10,5) -- Swing: mostly GBPUSD prices 1.25-1.33
+      ELSE (random() * 0.10 + 1.00)::numeric(10,5) -- News: mixed pairs, general forex range 1.00-1.10
     END as price,
     
     -- Profit/Loss with realistic win rate (~60% winners, varying by strategy)
@@ -130,8 +127,8 @@ ORDER BY date;
 -- Add some Friday afternoon losing trades (emotional trading pattern)
 INSERT INTO trades (user_id, strategy_id, date, symbol, type, quantity, price, profit, notes)
 SELECT 
-  'DUMMY_USER_ID_HERE',
-  'STRATEGY_1_ID_HERE', -- Scalping strategy  
+  '3ef865e6-fe24-4790-82b9-43849900b549',
+  '4d7872cc-1ed5-4e5f-af02-d60124179964', -- Scalping strategy  
   generate_friday_dates.friday_date,
   'EURUSD',
   'buy',
@@ -150,4 +147,4 @@ UPDATE trades
 SET 
   created_at = date + (random() * INTERVAL '4 hours')::interval,
   updated_at = date + (random() * INTERVAL '4 hours')::interval
-WHERE user_id = 'DUMMY_USER_ID_HERE';
+WHERE user_id = '3ef865e6-fe24-4790-82b9-43849900b549';
