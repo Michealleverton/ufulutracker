@@ -1,7 +1,13 @@
-require("dotenv").config();
+
+require("dotenv" ).config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
+
+// Make sure STRIPE_SECRET_KEY is set in your .env file
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("STRIPE_SECRET_KEY is missing from environment variables. Please add it to your .env file in the server directory.");
+}
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 app.use(cors());
@@ -391,6 +397,7 @@ app.post('/webhook/stripe', express.raw({type: 'application/json'}), async (req,
   res.json({received: true});
 });
 
-app.listen(process.env.SERVER_PORT, () => {
-  console.log(`Example app listening on port ${process.env.SERVER_PORT}`);
+const PORT = process.env.SERVER_PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });

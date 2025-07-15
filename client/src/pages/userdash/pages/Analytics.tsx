@@ -701,7 +701,7 @@ const Analytics = () => {
                 <TrendingUp className="h-5 w-5 text-blue-400" />
               </div>
               <div>
-                <div className="text-sm text-gray-400">Total Trades</div>
+                <div className="text-sm text-gray-400">Total Trades This Week</div>
                 <div className="text-lg font-bold text-white">{weeklyData.length}</div>
               </div>
             </div>
@@ -741,17 +741,27 @@ const Analytics = () => {
           
           <div className="bg-gray-700/50 rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                <Clock className="h-5 w-5 text-orange-400" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">Days Active</div>
-                <div className="text-lg font-bold text-white">
-                  {weeklyData.filter(day => day.profit !== 0).length}
-                </div>
-              </div>
+          <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+            <Clock className="h-5 w-5 text-orange-400" />
+          </div>
+          <div>
+            <div className="text-sm text-gray-400">Days Traded This Week</div>
+            <div className="text-lg font-bold text-white">
+              {/* Count unique days with trades in the current week */}
+              {(() => {
+                // weeklyData already contains only trades for the current week (from fetchWeeklyData)
+                // Filter for trades with profit !== 0
+                const tradesWithProfit = weeklyData.filter(trade => trade.profit !== 0);
+                // Get unique days using only the date part (YYYY-MM-DD) from the original string
+                const uniqueDays = Array.from(new Set(tradesWithProfit.map(trade => {
+                  return typeof trade.date === 'string' ? trade.date.split('T')[0] : '';
+                })));
+                return uniqueDays.filter(Boolean).length;
+              })()}
             </div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
 
