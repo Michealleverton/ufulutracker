@@ -527,14 +527,16 @@ const CalendarDay = ({ dayData, onDayClick, onTradeClick, onShowDayTradesModal }
     }).format(Math.abs(amount));
   };
 
+  // Use the same background for all days, only hover color differs
+  const dayBgClass = isCurrentMonth
+    ? 'bg-gray-800 hover:bg-gray-750'
+    : 'bg-gray-800 hover:bg-gray-750';
+
   return (
     <div
       className={`
         relative h-32 border border-gray-700 rounded-lg cursor-pointer transition-all duration-200
-        ${isCurrentMonth 
-          ? 'bg-gray-800 hover:bg-gray-750' 
-          : 'bg-gray-900/50 hover:bg-gray-800/50'
-        }
+        ${dayBgClass}
         ${isToday ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}
         ${hasProfit ? 'bg-gradient-to-br from-green-900/20 to-gray-800' : ''}
         ${hasLoss ? 'bg-gradient-to-br from-red-900/20 to-gray-800' : ''}
