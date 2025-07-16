@@ -88,6 +88,7 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
   const prevMonth = new Date(currentYear, currentMonth - 1, 0);
   const trailingDays = firstDayOfWeek;
 
+  // Calculate total cells needed (42 for perfect 6x7 grid)
   // Calculate total cells needed (35 for 5x7 grid)
   const totalCells = 35;
   const leadingDays = totalCells - trailingDays - daysInMonth;
@@ -96,19 +97,15 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
   const calendarDays: DayData[] = [];
 
   // Previous month trailing days
-  // Only add trailing days if trailingDays > 0
-  if (trailingDays > 0) {
-    const lastDayPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-    for (let i = trailingDays; i > 0; i--) {
-      const date = new Date(currentYear, currentMonth - 1, lastDayPrevMonth - (trailingDays - i));
-      calendarDays.push({
-        date,
-        trades: getTradesForDate(date),
-        totalPL: getTotalPLForDate(date),
-        isCurrentMonth: false,
-        isToday: isSameDay(date, today)
-      });
-    }
+  for (let i = trailingDays; i > 0; i--) {
+    const date = new Date(currentYear, currentMonth, 1 - i);
+    calendarDays.push({
+      date,
+      trades: getTradesForDate(date),
+      totalPL: getTotalPLForDate(date),
+      isCurrentMonth: false,
+      isToday: isSameDay(date, today)
+    });
   }
 
   // Current month days
@@ -527,19 +524,20 @@ const CalendarDay = ({ dayData, onDayClick, onTradeClick, onShowDayTradesModal }
     }).format(Math.abs(amount));
   };
 
-  // Use the same background for all days, only hover color differs
-  const dayBgClass = isCurrentMonth
+  // Consistent background for non-current month days
+  const baseBg = isCurrentMonth
     ? 'bg-gray-800 hover:bg-gray-750'
-    : 'bg-gray-800 hover:bg-gray-750';
-
+    : 'bg-gray-800/50 hover:bg-gray-750/50';
+  const profitBg = hasProfit ? 'bg-gradient-to-br from-green-900/20 to-gray-800' : '';
+  const lossBg = hasLoss ? 'bg-gradient-to-br from-red-900/20 to-gray-800' : '';
   return (
     <div
       className={`
         relative h-32 border border-gray-700 rounded-lg cursor-pointer transition-all duration-200
-        ${dayBgClass}
+        ${baseBg}
         ${isToday ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}
-        ${hasProfit ? 'bg-gradient-to-br from-green-900/20 to-gray-800' : ''}
-        ${hasLoss ? 'bg-gradient-to-br from-red-900/20 to-gray-800' : ''}
+        ${profitBg}
+        ${lossBg}
         hover:border-gray-600 group
       `}
       onClick={() => onDayClick(date)}

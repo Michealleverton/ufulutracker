@@ -15,6 +15,7 @@ import {
   DollarSign,
   TrendingUp,
   ChevronDown,
+  BarChart3,
   Calendar,
   Clock,
 } from "lucide-react";
@@ -49,6 +50,7 @@ import TimeOfDayPerformance from "../components/TimeOfDayPerformance";
 import RiskRewardScatter from "../components/RiskRewardScatter";
 import SymbolBreakdown from "../components/SymbolBreakdown";
 import MonthlyProfitLoss from "../components/MonthlyProfitLoss";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const GrossDailyPLGraph = lazy(() => import("../components/GrossDailyPLGraph"));
 
@@ -56,6 +58,9 @@ const GrossDailyPLGraph = lazy(() => import("../components/GrossDailyPLGraph"));
 // const ALPHA_VANTAGE_API_KEY = import.meta.env.VITE_VANTAGE_API_KEY;
 
 const Analytics = () => {
+
+  useScrollToTop();
+
   const { activeStrategy, user } = useStrategyContext();
   const defaultStatCards = [
     {
@@ -550,71 +555,86 @@ const Analytics = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-4 px-2 sm:px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">{activeStrategy.name}</h1>
-        <p className="text-gray-400">Track your trading performance for this strategy</p>
+    <div className="max-w-7xl mx-4 px-2 sm:px-4 p-8">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <BarChart3 className="w-8 h-8 text-purple-400" />
+        <h1 className="text-3xl font-bold text-white">Analytics</h1>
+        </div>
+        <p className="text-gray-400">Track your trading performance for your {activeStrategy?.name || "trading"}{" "}strategy</p>
       </div>
 
       {/* Account Balances */}
       <div className="bg-gray-800 rounded-xl p-6 mb-6 border border-gray-700">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Starting Balance */}
-          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm text-gray-400 font-medium">Starting Balance</label>
-              {isEditingBalance ? (
-                <input
-                  type="text"
-                  value={formatCurrency(startingBalance)}
-                  onChange={(e) =>
-                    setStartingBalance(
-                      Number(e.target.value.replace(/[^0-9.-]+/g, ""))
-                    )
-                  }
-                  onFocus={(e) => e.target.select()}
-                  onBlur={() => setIsEditingBalance(false)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setIsEditingBalance(false);
-                    }
-                  }}
-                  className="bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  autoFocus
-                />
-              ) : (
-                <div 
-                  onClick={() => setIsEditingBalance(true)}
-                  className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
-                  title="Click to edit"
-                >
-                  {formatCurrency(startingBalance)}
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+         {/* Starting Balance */}
+         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+           <div className="flex flex-col gap-2">
+             <label className="text-sm text-gray-400 font-medium">Starting Balance</label>
+             {isEditingBalance ? (
+               <input
+                 type="text"
+                 value={formatCurrency(startingBalance)}
+                 onChange={(e) =>
+                   setStartingBalance(
+                     Number(e.target.value.replace(/[^0-9.-]+/g, ""))
+                   )
+                 }
+                 onFocus={(e) => e.target.select()}
+                 onBlur={() => setIsEditingBalance(false)}
+                 onKeyDown={(e) => {
+                   if (e.key === 'Enter') {
+                     setIsEditingBalance(false);
+                   }
+                 }}
+                 className="bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 autoFocus
+               />
+             ) : (
+               <div 
+                 onClick={() => setIsEditingBalance(true)}
+                 className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
+                 title="Click to edit"
+               >
+                 {formatCurrency(startingBalance)}
+               </div>
+             )}
+           </div>
+         </div>
 
-          {/* Current Balance */}
-          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm text-gray-400 font-medium">Current Balance</label>
-              <div className="text-lg font-semibold text-green-400">
-                {formatCurrency(currentBalance)}
-              </div>
-            </div>
-          </div>
+         {/* Current Balance */}
+         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+           <div className="flex flex-col gap-2">
+             <label className="text-sm text-gray-400 font-medium">Current Balance</label>
+             <div className="text-lg font-semibold text-green-400">
+               {formatCurrency(currentBalance)}
+             </div>
+           </div>
+         </div>
 
-          {/* Weekly P&L */}
-          <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm text-gray-400 font-medium">This Week's P&L</label>
-              <div className={`text-lg font-semibold ${
-                totalWeeklyProfit >= 0 ? "text-green-400" : "text-red-400"
-              }`}>
-                {formatCurrency(totalWeeklyProfit)}
-              </div>
-            </div>
-          </div>
+         {/* Total Return (moved here, between Current Balance and Weekly P&L) */}
+         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+           <div className="flex flex-col gap-2">
+             <label className="text-sm text-gray-400 font-medium">Total Return</label>
+             <div className={`text-lg font-semibold ${
+               currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
+             }`}>
+               {((currentBalance - startingBalance) / startingBalance * 100).toFixed(1)}%
+             </div>
+           </div>
+         </div>
+
+         {/* Weekly P&L */}
+         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+           <div className="flex flex-col gap-2">
+             <label className="text-sm text-gray-400 font-medium">This Week's P&L</label>
+             <div className={`text-lg font-semibold ${
+               totalWeeklyProfit >= 0 ? "text-green-400" : "text-red-400"
+             }`}>
+               {formatCurrency(totalWeeklyProfit)}
+             </div>
+           </div>
+         </div>
         </div>
       </div>
 
@@ -677,93 +697,6 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Trading Insights Overview */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl p-6 mb-6 border border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-xl font-bold text-white mb-2">📊 Trading Overview</h2>
-            <p className="text-gray-400">Your performance snapshot and account growth</p>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-gray-400">Total Return</div>
-            <div className={`text-2xl font-bold ${
-              currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {((currentBalance - startingBalance) / startingBalance * 100).toFixed(1)}%
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-blue-400" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">Total Trades This Week</div>
-                <div className="text-lg font-bold text-white">{weeklyData.length}</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-green-400" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">Account Growth</div>
-                <div className={`text-lg font-bold ${
-                  currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {formatCurrency(currentBalance - startingBalance)}
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-purple-400" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">This Week</div>
-                <div className={`text-lg font-bold ${
-                  totalWeeklyProfit >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {formatCurrency(totalWeeklyProfit)}
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-            <Clock className="h-5 w-5 text-orange-400" />
-          </div>
-          <div>
-            <div className="text-sm text-gray-400">Days Traded This Week</div>
-            <div className="text-lg font-bold text-white">
-              {/* Count unique days with trades in the current week */}
-              {(() => {
-                // weeklyData already contains only trades for the current week (from fetchWeeklyData)
-                // Filter for trades with profit !== 0
-                const tradesWithProfit = weeklyData.filter(trade => trade.profit !== 0);
-                // Get unique days using only the date part (YYYY-MM-DD) from the original string
-                const uniqueDays = Array.from(new Set(tradesWithProfit.map(trade => {
-                  return typeof trade.date === 'string' ? trade.date.split('T')[0] : '';
-                })));
-                return uniqueDays.filter(Boolean).length;
-              })()}
-            </div>
-          </div>
-        </div>
-      </div>
-        </div>
-      </div>
 
       <div className="mb-4 mt-10 overflow-x-auto">
         <ChartCard title="🚀 Enhanced Equity Curve">

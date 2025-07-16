@@ -12,7 +12,8 @@ import {
   CheckCircle,
   BarChart3,
   X,
-  Plus
+  Plus,
+  NotebookPen
 } from "lucide-react";
 
 const TradingPlan = () => {
@@ -162,30 +163,24 @@ const TradingPlan = () => {
   ).toLocaleString()}`;
 
   return (
-    <div
-      className={`${
-        theme === "light" ? "bg-gray-900" : "bg-gray-50"
-      } min-h-screen`}
-    >
+    <div className="min-h-screen bg-gray-900 text-white p-8">
       {/* Header */}
-      <div className="text-white p-8">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <NotebookPen className="w-8 h-8 text-purple-400" />
+          <h1 className="text-3xl font-bold text-white">
             {/* <Target size={36} /> */}
             My Trading Plan
           </h1>
-          <p className="text-indigo-100 text-lg">Your roadmap to trading success</p>
         </div>
+          <p className="text-gray-400 text-lg">Your roadmap to trading success</p>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="space-y-6">
         
         {/* Purpose Section */}
         <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Target className="text-blue-600" size={24} />
-            </div>
             <h2 className={`text-2xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
               My Purpose
             </h2>
@@ -222,9 +217,6 @@ const TradingPlan = () => {
           {/* Monthly Expenses Card */}
           <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <DollarSign className="text-red-600" size={24} />
-              </div>
               <h3 className={`text-xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
                 Monthly Expenses
               </h3>
@@ -266,9 +258,6 @@ const TradingPlan = () => {
           {/* Monthly Income Card */}
           <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="text-green-600" size={24} />
-              </div>
               <h3 className={`text-xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
                 Monthly Income
               </h3>
@@ -312,9 +301,6 @@ const TradingPlan = () => {
         {/* Money Plan & Calculations */}
         <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Calculator className="text-purple-600" size={24} />
-            </div>
             <h2 className={`text-2xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
               Trading Account Requirements
             </h2>
@@ -390,9 +376,6 @@ const TradingPlan = () => {
         {/* Risk Management */}
         <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Shield className="text-yellow-600" size={24} />
-            </div>
             <h2 className={`text-2xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
               Risk Management Targets
             </h2>
@@ -612,9 +595,6 @@ const TradingPlan = () => {
         {/* Trading Symbols */}
         <div className={`${theme === "light" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"} rounded-xl border shadow-lg p-6`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <BarChart3 className="text-green-600" size={24} />
-            </div>
             <h2 className={`text-2xl font-bold ${theme === "light" ? "text-white" : "text-gray-900"}`}>
               Trading Instruments
             </h2>

@@ -27,7 +27,7 @@ import { useStrategyContext } from "../../../Context/StrategyContext";
 import { GoogleGenAI } from "@google/genai";
 
 const Dashboard = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isStrategyOpen, setIsStrategyOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);

@@ -1,5 +1,5 @@
 import TradingCalendar, { TradingCalendarRef } from '../../../components/TradingCalendar';
-import { Calendar, BookOpen, Plus, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { CalendarDays , BookOpen, Plus, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { useStrategyContext } from '../../../Context/StrategyContext';
 import { useRef, useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
@@ -90,16 +90,12 @@ const Journal = () => {
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-blue-400" />
-            </div>
-            <div>
+              <CalendarDays  className="h-8 w-8 text-purple-400" />
               <h1 className="text-3xl font-bold text-white">Trading Journal Calendar</h1>
+            </div>
               <p className="text-gray-400">
                 {activeStrategy ? `Track trades for ${activeStrategy.name}` : 'Select a strategy to view trades'}
               </p>
-            </div>
-          </div>
         </div>
 
         {/* Instructions & Quick Actions */}

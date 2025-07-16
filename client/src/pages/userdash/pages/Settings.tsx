@@ -3,9 +3,13 @@ import { Mail, Lock, User } from "lucide-react";
 import { FormInput } from "../components/FormInput";
 import { supabase } from "../../../lib/supabase";
 import toast from "react-hot-toast";
+import useScrollToTop from "../../hooks/useScrollToTop";
 // import { useTheme } from "../../../Context/ThemeContext";
 
 const Settings = () => {
+
+  useScrollToTop();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -488,103 +492,113 @@ const Settings = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center min-h-screen bg-gray-900 p-4">
-          <div className="w-full max-w-2xl bg-gray-800 dark:bg-gray-200 rounded-2xl shadow-2xl p-8">
-            <h1 className="text-3xl font-bold text-white dark:text-black mb-8 text-center">
-              Account Settings
+          <div className="w-full max-w-2xl space-y-8">
+            <h1 className="text-3xl font-bold text-white mb-8 text-center">
+              Profile Settings
             </h1>
 
             {/* Avatar Section */}
-            <div className="flex flex-col items-center mb-8">
-              <img
-                src={avatarUrl || "https://ui-avatars.com/api/?name=User"}
-                alt="Avatar"
-                className="w-24 h-24 rounded-full object-cover mb-4 border-4 border-indigo-500"
-              />
-              <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                Upload New Avatar
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                className="hidden"
-                onChange={handleAvatarUpload}
-              />
+            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 flex flex-col items-center shadow-lg">
+              <h2 className="text-xl font-semibold text-white mb-4">Profile Avatar</h2>
+              <div className="relative flex flex-col items-center">
+                <img
+                  src={avatarUrl || "https://ui-avatars.com/api/?name=User"}
+                  alt="Avatar"
+                  className="w-36 h-36 rounded-full object-cover mb-2 border-4 border-indigo-500"
+                />
+                <button
+                  className="bg-green-600 hover:bg-green-700 border border-green-500 text-white px-3 py-1 text-xs rounded absolute shadow"
+                  style={{ minWidth: '60px', bottom: '40px', right: '24px', transform: 'translate(50%, 50%)' }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Update
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </div>
             </div>
 
-            <hr className="my-6 border-gray-700 dark:border-gray-300" />
+            {/* Profile Info Cards Group */}
+            <div className="w-full flex flex-col gap-4 bg-gray-800 rounded-2xl p-6 mb-8 border border-gray-300/20">
+              {/* Username Update Card */}
+              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-white mb-4">Update Username</h2>
+                <form onSubmit={handleUpdateProfile}>
+                  <FormInput
+                    id="username"
+                    type="text"
+                    label="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    icon={User}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center mt-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Update Username
+                  </button>
+                </form>
+              </div>
 
-            {/* Profile Info Section */}
-            <form onSubmit={handleUpdateProfile} className="mb-6">
-              <h2 className="text-xl font-semibold text-white dark:text-black mb-4">
-                Profile Info
-              </h2>
-              <FormInput
-                id="username"
-                type="text"
-                label="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                icon={User}
-                required
-              />
-              <button
-                type="submit"
-                className="w-full flex justify-center mt-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Update Username
-              </button>
-            </form>
-            <form onSubmit={handleUpdateEmail} className="mb-6">
-              <FormInput
-                id="email"
-                type="email"
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                icon={Mail}
-                required
-              />
-              <button
-                type="submit"
-                className="w-full flex justify-center py-2 px-4 mt-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Update Email
-              </button>
-            </form>
-            <form onSubmit={handleUpdatePassword} className="mb-6">
-              <FormInput
-                id="password"
-                type="password"
-                label="New Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                icon={Lock}
-                required
-              />
-              <button
-                type="submit"
-                className="w-full flex justify-center py-2 px-4 mt-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Update Password
-              </button>
-            </form>
+              {/* Email Update Card */}
+              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-white mb-4">Update Email</h2>
+                <form onSubmit={handleUpdateEmail}>
+                  <FormInput
+                    id="email"
+                    type="email"
+                    label="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    icon={Mail}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 mt-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Update Email
+                  </button>
+                </form>
+              </div>
 
-            <hr className="my-6 border-gray-700 dark:border-gray-300" />
+              {/* Password Update Card */}
+              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-white mb-4">Update Password</h2>
+                <form onSubmit={handleUpdatePassword}>
+                  <FormInput
+                    id="password"
+                    type="password"
+                    label="New Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    icon={Lock}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 mt-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Update Password
+                  </button>
+                </form>
+              </div>
+            </div>
 
             {/* Subscription Section */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-white dark:text-black mb-2">
+            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 shadow-lg">
+              <h2 className="text-xl font-semibold text-white mb-2">
                 Subscription
               </h2>
-              <div className="mb-2 text-gray-300 dark:text-gray-700">
-                Current Plan:{" "}
-                <span className="font-bold capitalize">
-                  {currentPlan} Plan
-                </span>
+              <div className="mb-2 text-gray-300">
+                Current Plan: <span className="font-bold capitalize">{currentPlan} Plan</span>
               </div>
               <div className="text-gray-500 mb-6 text-sm">
                 {isFreePlan(currentPlan) ? 
@@ -592,25 +606,20 @@ const Settings = () => {
                   'Update/Cancel your subscription plan or manage your billing details through the customer portal.'
                 }
               </div>
-
-              <div className="mb-6">
-                <button
-                  type="button"
-                  onClick={handleOpenCustomerPortal}
-                  disabled={!user || isLoading}
-                  className="text-white shadow-lg mb-6 text-sm font-medium block w-full text-center py-2 rounded-lg transition-colors bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed focus:outline-none"
-                >
-                  {isLoading ? 'Opening Portal...' : 
-                   isFreePlan(currentPlan) ? 
-                   'Upgrade Subscription' : 'Manage Subscription'}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleOpenCustomerPortal}
+                disabled={!user || isLoading}
+                className="text-white shadow-lg mb-2 text-sm font-medium block w-full text-center py-2 rounded-lg transition-colors bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed focus:outline-none"
+              >
+                {isLoading ? 'Opening Portal...' : 
+                  isFreePlan(currentPlan) ? 
+                  'Upgrade Subscription' : 'Manage Subscription'}
+              </button>
             </div>
 
-            <hr className="my-6 border-gray-700 dark:border-gray-300" />
-
             {/* Cancel Account Section */}
-            <div className="flex flex-col items-center">
+            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 shadow-lg flex flex-col items-center">
               <button
                 type="button"
                 className="w-full max-w-xs flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
