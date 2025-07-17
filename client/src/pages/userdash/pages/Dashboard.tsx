@@ -27,7 +27,15 @@ import { useStrategyContext } from "../../../Context/StrategyContext";
 import { GoogleGenAI } from "@google/genai";
 
 const Dashboard = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  // Persist sidebar collapsed state in localStorage
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem('sidebarCollapsed');
+    return stored === null ? true : stored === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+  }, [isCollapsed]);
   const [isStrategyOpen, setIsStrategyOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);

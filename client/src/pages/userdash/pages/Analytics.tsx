@@ -16,8 +16,6 @@ import {
   TrendingUp,
   ChevronDown,
   BarChart3,
-  Calendar,
-  Clock,
 } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { ChartCard } from "../components/ChartCard";

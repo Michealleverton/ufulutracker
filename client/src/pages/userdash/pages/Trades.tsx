@@ -27,6 +27,66 @@ import {
 } from "lucide-react";
 
 const Trades = () => {
+  // Export dropdown state
+  const [exportOpen, setExportOpen] = useState(false);
+
+  // Close export dropdown when clicking outside
+  useEffect(() => {
+    if (!exportOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.export-dropdown')) {
+        setExportOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [exportOpen]);
+  // Export helpers
+  const exportToCSV = () => {
+    if (!filteredTrades.length) return;
+    interface Replacer {
+      (key: string, value: unknown): unknown;
+    }
+    const replacer: Replacer = (_, value) => (value === null ? '' : value);
+    const header = Object.keys(filteredTrades[0]);
+    const csv = [
+      header.join(','),
+      ...filteredTrades.map(row =>
+        header.map(field => JSON.stringify(row[field as keyof Trade], replacer)).join(',')
+      ),
+    ].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'trades.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const exportToExcel = () => {
+    if (!filteredTrades.length) return;
+    // Simple Excel export using tab-separated values
+    interface Replacer {
+      (key: string, value: unknown): unknown;
+    }
+    const replacer: Replacer = (_, value) => (value === null ? '' : value);
+    const header = Object.keys(filteredTrades[0]);
+    const tsv = [
+      header.join('\t'),
+      ...filteredTrades.map(row =>
+        header.map(field => JSON.stringify(row[field as keyof Trade], replacer)).join('\t')
+      ),
+    ].join('\r\n');
+    const blob = new Blob([tsv], { type: 'application/vnd.ms-excel' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'trades.xls';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
   const [trades, setTrades] = useState<Trade[]>([]);
   const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -525,6 +585,35 @@ const Trades = () => {
               </div>
             </div>
 
+            {/* Export dropdown beside New Trade button */}
+            <div className="relative inline-block text-left export-dropdown">
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors"
+                onClick={() => setExportOpen((open) => !open)}
+                aria-haspopup="true"
+                aria-expanded={exportOpen}
+              >
+                Export
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              {exportOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => { exportToCSV(); setExportOpen(false); }}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-700 text-white"
+                  >
+                    Download CSV
+                  </button>
+                  <button
+                    onClick={() => { exportToExcel(); setExportOpen(false); }}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-700 text-white"
+                  >
+                    Download Excel
+                  </button>
+                </div>
+              )}
+            </div>
+
             {selectedTrades.size > 0 && (
               <button
                 onClick={handleDeleteSelectedTrades}
@@ -783,7 +872,7 @@ const Trades = () => {
                             </select>
                           ) : (
                             <span
-                              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                              className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
                                 trade.type === "buy"
                                   ? "bg-green-900 text-green-300"
                                   : "bg-red-900 text-red-300"

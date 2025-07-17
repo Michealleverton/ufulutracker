@@ -2,12 +2,9 @@ import { useState } from "react";
 import { useTheme } from "../../../Context/ThemeContext";
 import { 
   Target, 
-  DollarSign, 
   TrendingUp, 
-  Shield, 
   Clock, 
   PenTool,
-  Calculator,
   AlertTriangle,
   CheckCircle,
   BarChart3,

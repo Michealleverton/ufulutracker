@@ -85,7 +85,6 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
   const daysInMonth = lastDayOfMonth.getDate();
 
   // Get previous month's trailing days
-  const prevMonth = new Date(currentYear, currentMonth - 1, 0);
   const trailingDays = firstDayOfWeek;
 
   // Calculate total cells needed (42 for perfect 6x7 grid)
