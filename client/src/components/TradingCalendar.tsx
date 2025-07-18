@@ -296,7 +296,7 @@ const TradingCalendar = forwardRef<TradingCalendarRef>((_, ref) => {
         <div className="grid grid-cols-7 gap-1 mb-2">
           {weekDays.map(day => (
             <div key={day} className="h-10 flex items-center justify-center">
-              <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <span className="text-sm font-semibold text-gray-100 uppercase tracking-wider">
                 {day}
               </span>
             </div>

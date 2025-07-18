@@ -98,36 +98,30 @@ const NewsPage = () => {
   }
 
   return (
-    <div className="p-8">
-      <div className="fixed top-0 left-0 right-0 bg-gray-900 text-white py-2 px-4 z-50">
-        {/* <marquee behavior="scroll" direction="left">
-          Latest Forex, Stocks, and Commodities News
-        </marquee> */}
-      </div>
+    <div className="p-8 bg-white text-gray-900 dark:bg-gray-900 dark:text-white min-h-screen">
       <div className="">
-      
-                {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <BookOpen className="w-8 h-8 text-purple-400" />
-          <h1 className="text-3xl font-bold text-white">Market News</h1>
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <BookOpen className="w-8 h-8 text-purple-500 dark:text-purple-400" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Market News</h1>
+          </div>
+          <p className="text-gray-700 dark:text-gray-400 mb-0">
+            Get all your daily trading news here.
+          </p>
         </div>
-        <p className="text-gray-400 mb-0">
-          Get all your daily trading news here.
-        </p>
-      </div>
 
-        <h2 className="text-white text-2xl font-bold mb-2">Forex News</h2>
+        <h2 className="text-gray-900 dark:text-white text-2xl font-bold mb-2">Forex News</h2>
         <div className="flex flex-col gap-4 mb-8">
           {currentForexArticles.map((article, index) => (
             <div
               key={index}
-              className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="w-full p-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
             >
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {article.title}
               </h2>
-              <p className="text-gray-400 mb-4 line-clamp-5">
+              <p className="text-gray-700 dark:text-gray-400 mb-4 line-clamp-5">
                 {typeof article?.summary === "string" && article.summary.trim()
                   ? article.summary
                       .replace(/<\/?[^>]+(>|$)/g, "")
@@ -138,25 +132,25 @@ const NewsPage = () => {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 Read more
               </a>
             </div>
           ))}
         </div>
-        <h2 className="text-white text-2xl font-bold mb-2">Stocks News</h2>
+        <h2 className="text-gray-900 dark:text-white text-2xl font-bold mb-2">Stocks News</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {currentStockArticles.map((article, index) => (
-            <div key={index} className="p-4 bg-gray-800 border border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-              <h2 className="text-xl font-semibold text-white mb-2">{article.title}</h2>
-              <p className="text-gray-400 mb-4 line-clamp-5">
-    {(article.summary || "No summary available.")
-      .replace(/<\/?[^>]+(>|$)/g, "")
-      .replace(/[`>]/g, "")
-    }
-  </p>
-              <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+            <div key={index} className="p-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{article.title}</h2>
+              <p className="text-gray-700 dark:text-gray-400 mb-4 line-clamp-5">
+                {(article.summary || "No summary available.")
+                  .replace(/<\/?[^>]+(>|$)/g, "")
+                  .replace(/[`>]/g, "")
+                }
+              </p>
+              <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
                 Read more
               </a>
             </div>
@@ -165,7 +159,7 @@ const NewsPage = () => {
         <div className="flex justify-center mt-4">
           <button
             onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-            className="mx-1 px-3 py-1 rounded bg-gray-700 text-gray-300"
+            className="mx-1 px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
             disabled={currentPage === 1}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -173,7 +167,7 @@ const NewsPage = () => {
           {renderPageNumbers()}
           <button
             onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-            className="mx-1 px-3 py-1 rounded bg-gray-700 text-gray-300"
+            className="mx-1 px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
             disabled={currentPage === totalPages}
           >
             <ChevronRight className="h-5 w-5" />

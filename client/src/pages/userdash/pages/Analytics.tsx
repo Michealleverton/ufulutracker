@@ -553,22 +553,22 @@ const Analytics = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-4 px-2 sm:px-4 p-8">
+    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <BarChart3 className="w-8 h-8 text-purple-400" />
-        <h1 className="text-3xl font-bold text-white">Analytics</h1>
+          <BarChart3 className="w-8 h-8 text-purple-500 dark:text-purple-400" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics</h1>
         </div>
-        <p className="text-gray-400">Track your trading performance for your {activeStrategy?.name || "trading"}{" "}strategy</p>
+        <p className="text-gray-600 dark:text-gray-400">Track your trading performance for your {activeStrategy?.name || "trading"} strategy</p>
       </div>
 
       {/* Account Balances */}
-      <div className="bg-gray-800 rounded-xl p-6 mb-6 border border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
          {/* Starting Balance */}
-         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+         <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
            <div className="flex flex-col gap-2">
-             <label className="text-sm text-gray-400 font-medium">Starting Balance</label>
+             <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">Starting Balance</label>
              {isEditingBalance ? (
                <input
                  type="text"
@@ -585,13 +585,13 @@ const Analytics = () => {
                      setIsEditingBalance(false);
                    }
                  }}
-                 className="bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 className="bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2 text-gray-900 dark:text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                  autoFocus
                />
              ) : (
                <div 
                  onClick={() => setIsEditingBalance(true)}
-                 className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
+                 className="text-lg font-semibold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                  title="Click to edit"
                >
                  {formatCurrency(startingBalance)}
@@ -601,21 +601,21 @@ const Analytics = () => {
          </div>
 
          {/* Current Balance */}
-         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+         <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
            <div className="flex flex-col gap-2">
-             <label className="text-sm text-gray-400 font-medium">Current Balance</label>
-             <div className="text-lg font-semibold text-green-400">
+             <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">Current Balance</label>
+             <div className="text-lg font-semibold text-green-600 dark:text-green-400">
                {formatCurrency(currentBalance)}
              </div>
            </div>
          </div>
 
          {/* Total Return (moved here, between Current Balance and Weekly P&L) */}
-         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+         <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
            <div className="flex flex-col gap-2">
-             <label className="text-sm text-gray-400 font-medium">Total Return</label>
+             <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">Total Return</label>
              <div className={`text-lg font-semibold ${
-               currentBalance - startingBalance >= 0 ? 'text-green-400' : 'text-red-400'
+               currentBalance - startingBalance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
              }`}>
                {((currentBalance - startingBalance) / startingBalance * 100).toFixed(1)}%
              </div>
@@ -623,11 +623,11 @@ const Analytics = () => {
          </div>
 
          {/* Weekly P&L */}
-         <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+         <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
            <div className="flex flex-col gap-2">
-             <label className="text-sm text-gray-400 font-medium">This Week's P&L</label>
+             <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">This Week's P&L</label>
              <div className={`text-lg font-semibold ${
-               totalWeeklyProfit >= 0 ? "text-green-400" : "text-red-400"
+               totalWeeklyProfit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
              }`}>
                {formatCurrency(totalWeeklyProfit)}
              </div>
@@ -638,7 +638,7 @@ const Analytics = () => {
 
 
       {/* Weekly Trading Overview */}
-      <div className="bg-gray-800 rounded-xl p-6 mb-6 border border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-white mb-1">Weekly Performance</h3>
           <p className="text-sm text-gray-400">
@@ -671,23 +671,23 @@ const Analytics = () => {
             return (
               <div
                 key={day}
-                className={`bg-gray-700/50 rounded-lg p-4 border transition-all duration-200 ${
-                  hasActivity 
-                    ? "border-blue-500 shadow-lg shadow-blue-500/20" 
-                    : "border-gray-600"
-                }`}
+              className={`bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 border transition-all duration-200 ${
+                hasActivity 
+                  ? "border-blue-400 dark:border-blue-500 shadow-lg shadow-blue-200 dark:shadow-blue-500/20" 
+                  : "border-gray-200 dark:border-gray-600"
+              }`}
               >
                 <div className="text-center">
-                  <div className="text-sm text-gray-400 mb-1">{day}</div>
-                  <div className="text-lg font-bold text-white mb-2">{dayOfMonth}</div>
-                  <div className={`text-lg font-semibold mb-1 ${
-                    dayProfit >= 0 ? "text-green-400" : "text-red-400"
-                  }`}>
-                    {hasActivity ? formatCurrency(dayProfit) : "$0.00"}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {hasActivity ? `${dayData.length} trade${dayData.length > 1 ? 's' : ''}` : "No trades"}
-                  </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{day}</div>
+                <div className="text-lg font-bold text-gray-900 dark:text-white mb-2">{dayOfMonth}</div>
+                <div className={`text-lg font-semibold mb-1 ${
+                  dayProfit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                }`}>
+                  {hasActivity ? formatCurrency(dayProfit) : "$0.00"}
+                </div>
+                <div className="text-xs text-gray-400 dark:text-gray-500">
+                  {hasActivity ? `${dayData.length} trade${dayData.length > 1 ? 's' : ''}` : "No trades"}
+                </div>
                 </div>
               </div>
             );
@@ -753,12 +753,12 @@ const Analytics = () => {
         </ChartCard>
       </div>
 
-      <div className="flex justify-start mb-4 font-white">
+      <div className="flex justify-start mb-4">
         {/* Dashboard Selector Dropdown */}
         <div className="relative dashboard-dropdown mt-8 mb-4">
           <button
             onClick={() => setIsDashboardDropdownOpen(!isDashboardDropdownOpen)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <span className="text-sm font-medium">{selectedDashboard}</span>
             <ChevronDown 
@@ -767,7 +767,7 @@ const Analytics = () => {
           </button>
           
           {isDashboardDropdownOpen && (
-            <div className="absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+            <div className="absolute top-full left-0 mt-1 w-80 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-50">
               {Object.entries(dashboardPresets).map(([key, preset]) => (
                 <button
                   key={key}
@@ -782,12 +782,12 @@ const Analytics = () => {
                       }))
                     );
                   }}
-                  className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700 ${
-                    selectedDashboard === key ? 'bg-gray-700' : ''
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 ${
+                    selectedDashboard === key ? 'bg-gray-100 dark:bg-gray-700' : ''
                   }`}
                 >
-                  <div className="font-medium text-white">{preset.name}</div>
-                  <div className="text-sm text-gray-400 mt-1">{preset.description}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{preset.name}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{preset.description}</div>
                 </button>
               ))}
               
@@ -798,10 +798,10 @@ const Analytics = () => {
                   setIsDashboardDropdownOpen(false);
                   setIsModalOpen(true);
                 }}
-                className="w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-600"
+                className="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-t border-gray-300 dark:border-gray-600"
               >
-                <div className="font-medium text-white">Custom Dashboard</div>
-                <div className="text-sm text-gray-400 mt-1">Manually select which cards to display</div>
+                <div className="font-medium text-gray-900 dark:text-white">Custom Dashboard</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Manually select which cards to display</div>
               </button>
             </div>
           )}
@@ -824,7 +824,7 @@ const Analytics = () => {
         
         <Suspense
           fallback={
-            <div className="text-white">Loading Gross Daily P&L...</div>
+            <div className="text-gray-900 dark:text-white">Loading Gross Daily P&L...</div>
           }
         >
           <GrossDailyPLGraph data={dailyPLData} />
@@ -833,11 +833,11 @@ const Analytics = () => {
 
       {/* Advanced Analytics Section */}
       <div className="mt-12 mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
           🚀 Advanced Analytics
-          <span className="text-sm text-gray-400 font-normal">Deep insights into your trading patterns</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400 font-normal">Deep insights into your trading patterns</span>
         </h2>
-        <p className="text-gray-400 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           Discover hidden patterns, optimize your performance, and gain a competitive edge with these advanced visualizations.
         </p>
       </div>

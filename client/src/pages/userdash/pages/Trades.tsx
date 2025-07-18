@@ -447,14 +447,14 @@ const Trades = () => {
   // Show loading or no strategy message
   if (!user || !activeStrategy) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+      <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">
             {!user
               ? "Please log in to view trades"
               : "No active strategy selected"}
           </h2>
-          <p className="text-gray-400">
+          <p className="text-gray-500 dark:text-gray-400">
             {!user
               ? "You need to be logged in to access your trades."
               : "Please select an active strategy from the sidebar to view and manage your trades."}
@@ -466,30 +466,30 @@ const Trades = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-900">
+      <div className="flex flex-col items-center justify-center h-screen bg-white dark:bg-gray-900">
         <div className="loader">
           <div className="loader-item"></div>
           <div className="loader-item"></div>
           <div className="loader-item"></div>
         </div>
-        <p className="text-white mt-4">Loading trades...</p>
+        <p className="text-gray-900 dark:text-white mt-4">Loading trades...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+      <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4 text-red-500">
+          <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-500">
             Error Loading Trades
           </h2>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
             There was an error loading your trades. Please try again.
           </p>
           <button
             onClick={fetchTrades}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Retry
           </button>
@@ -499,32 +499,32 @@ const Trades = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen p-8 bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <History className="w-8 h-8 text-purple-400" />
-          <h1 className="text-3xl font-bold text-white">Trading Journal</h1>
+          <History className="w-8 h-8 text-purple-500 dark:text-purple-400" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Trading Journal</h1>
         </div>
-        <p className="text-gray-400 mb-0">
+        <p className="text-lg text-gray-700 dark:text-gray-400 mb-0">
           Track and analyze your trades with detailed metrics and insights.
         </p>
       </div>
 
       {/* Controls */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
+      <div className="rounded-xl border shadow-lg p-6 mb-6 bg-gray-100 border-gray-300 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Left side - Search and filters */}
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400 h-4 w-4" />
               <input
                 type="text"
                 placeholder="Search by symbol, notes, or type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
+                className="pl-10 pr-4 py-2 bg-gray-100 border border-gray-300 text-gray-900 placeholder-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
               />
             </div>
 
@@ -534,7 +534,7 @@ const Trades = () => {
               onChange={(e) =>
                 setFilterType(e.target.value as "all" | "buy" | "sell")
               }
-              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
               <option value="buy">Buy Orders</option>
@@ -545,7 +545,7 @@ const Trades = () => {
             <select
               value={itemsPerPage}
               onChange={(e) => setItemsPerPage(Number(e.target.value))}
-              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value={5}>5 per page</option>
               <option value={10}>10 per page</option>
@@ -559,16 +559,16 @@ const Trades = () => {
           <div className="flex gap-3">
             {/* Column visibility dropdown */}
             <div className="relative group">
-              <button className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors">
-                <Eye className="h-4 w-4" />
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:text-white rounded-lg transition-colors">
+                <Eye className="h-4 w-4 text-gray-900 dark:text-white" />
                 Columns
               </button>
-              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-100 dark:bg-gray-800 border border-gray-600 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                 <div className="p-2">
                   {Object.entries(visibleColumns).map(([column, visible]) => (
                     <label
                       key={column}
-                      className="flex items-center gap-2 p-2 hover:bg-gray-700 rounded cursor-pointer"
+                      className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -576,7 +576,7 @@ const Trades = () => {
                         onChange={() => toggleColumnVisibility(column)}
                         className="rounded"
                       />
-                      <span className="capitalize text-sm">
+                      <span className="capitalize text-sm text-gray-900 dark:text-white">
                         {column.replace("_", " ")}
                       </span>
                     </label>
@@ -588,7 +588,7 @@ const Trades = () => {
             {/* Export dropdown beside New Trade button */}
             <div className="relative inline-block text-left export-dropdown">
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 dark:text-white rounded-lg transition-colors"
                 onClick={() => setExportOpen((open) => !open)}
                 aria-haspopup="true"
                 aria-expanded={exportOpen}
@@ -597,16 +597,16 @@ const Trades = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
               </button>
               {exportOpen && (
-                <div className="absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10">
+                <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-white rounded-lg shadow-lg z-10">
                   <button
                     onClick={() => { exportToCSV(); setExportOpen(false); }}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-700 text-white"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Download CSV
                   </button>
                   <button
                     onClick={() => { exportToExcel(); setExportOpen(false); }}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-700 text-white"
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Download Excel
                   </button>
@@ -617,7 +617,7 @@ const Trades = () => {
             {selectedTrades.size > 0 && (
               <button
                 onClick={handleDeleteSelectedTrades}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
                 Delete ({selectedTrades.size})
@@ -626,7 +626,7 @@ const Trades = () => {
 
             <button
               onClick={handleCreateTrade}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
             >
               <Plus className="h-4 w-4" />
               New Trade
@@ -637,14 +637,14 @@ const Trades = () => {
 
       {/* Empty state */}
       {filteredTrades.length === 0 ? (
-        <div className="bg-gray-800 rounded-lg p-12 text-center">
-          <DollarSign className="h-16 w-16 text-gray-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center">
+          <DollarSign className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
             {searchTerm || filterType !== "all"
               ? "No matching trades found"
               : "No trades yet"}
           </h3>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
             {searchTerm || filterType !== "all"
               ? "Try adjusting your search or filters to find what you're looking for."
               : "Create your first trade to start tracking your trading performance."}
@@ -652,7 +652,7 @@ const Trades = () => {
           {!searchTerm && filterType === "all" && (
             <button
               onClick={handleCreateTrade}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors font-medium"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors font-medium"
             >
               Create Your First Trade
             </button>
@@ -662,12 +662,12 @@ const Trades = () => {
         <>
           {/* Table */}
           <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                {/* Table Header */}
-                <thead className="bg-gray-750">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              {/* Table Header */}
+              <thead className="bg-gray-100 dark:bg-gray-800">
                   <tr>
-                    <th className="p-4 text-left">
+                    <th className="p-4 text-left text-gray-700 dark:text-gray-200">
                       <input
                         type="checkbox"
                         checked={
@@ -680,7 +680,7 @@ const Trades = () => {
                     </th>
                     {visibleColumns.date && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("date")}
                       >
                         <div className="flex items-center gap-2">
@@ -692,7 +692,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.trade_time && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("trade_time")}
                       >
                         <div className="flex items-center gap-2">
@@ -704,7 +704,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.symbol && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("symbol")}
                       >
                         <div className="flex items-center gap-2">
@@ -715,7 +715,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.type && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("type")}
                       >
                         <div className="flex items-center gap-2">
@@ -726,7 +726,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.entry_price && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("entry_price")}
                       >
                         <div className="flex items-center gap-2">
@@ -737,7 +737,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.exit_price && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("exit_price")}
                       >
                         <div className="flex items-center gap-2">
@@ -748,7 +748,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.quantity && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("quantity")}
                       >
                         <div className="flex items-center gap-2">
@@ -759,7 +759,7 @@ const Trades = () => {
                     )}
                     {visibleColumns.profit && (
                       <th
-                        className="p-4 text-left cursor-pointer hover:bg-gray-700 transition-colors"
+                        className="p-4 text-left text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => handleSort("profit")}
                       >
                         <div className="flex items-center gap-2">
@@ -770,283 +770,286 @@ const Trades = () => {
                       </th>
                     )}
                     {visibleColumns.notes && (
-                      <th className="p-4 text-left">Notes</th>
+                      <th className="p-4 text-left text-gray-700 dark:text-gray-200">Notes</th>
                     )}
-                    <th className="p-4 text-left">Actions</th>
+                    <th className="p-4 text-left text-gray-700 dark:text-gray-200">Actions</th>
                   </tr>
                 </thead>
 
                 {/* Table Body */}
                 <tbody>
-                  {currentTrades.map((trade) => (
-                    <tr
-                      key={trade.id}
-                      className="border-t border-gray-700 hover:bg-gray-750 transition-colors"
-                    >
-                      <td className="p-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedTrades.has(trade.id)}
-                          onChange={() => toggleTradeSelection(trade.id)}
-                          className="rounded"
-                        />
-                      </td>
-                      {visibleColumns.date && (
+                  {currentTrades.map((trade) => {
+                    const isSelected = selectedTrades.has(trade.id);
+                    return (
+                      <tr
+                        key={trade.id}
+                        className={`border-t border-gray-200 dark:border-gray-700 ${isSelected ? 'bg-gray-100 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'} ${!isSelected ? 'hover:bg-gray-100 dark:hover:bg-gray-700' : ''} transition-colors`}
+                      >
                         <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="date"
-                              defaultValue={trade.date}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  date: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm">
-                              {formatDate(trade.date)}
-                            </span>
-                          )}
+                          <input
+                            type="checkbox"
+                            checked={selectedTrades.has(trade.id)}
+                            onChange={() => toggleTradeSelection(trade.id)}
+                            className="rounded"
+                          />
                         </td>
-                      )}
-                      {visibleColumns.trade_time && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="time"
-                              defaultValue={trade.trade_time}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  trade_time: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm">
-                              {formatTime(trade.trade_time)}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.symbol && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="text"
-                              defaultValue={trade.symbol}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  symbol: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="font-medium text-blue-400">
-                              {trade.symbol}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.type && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <select
-                              defaultValue={trade.type}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  type: e.target.value as "buy" | "sell",
-                                })
-                              }
-                            >
-                              <option value="buy">Buy</option>
-                              <option value="sell">Sell</option>
-                            </select>
-                          ) : (
-                            <span
-                              className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
-                                trade.type === "buy"
-                                  ? "bg-green-900 text-green-300"
-                                  : "bg-red-900 text-red-300"
-                              }`}
-                            >
-                              {trade.type === "buy" ? (
-                                <TrendingUp className="h-3 w-3" />
-                              ) : (
-                                <TrendingDown className="h-3 w-3" />
-                              )}
-                              {trade.type}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.entry_price && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="number"
-                              step="0.01"
-                              defaultValue={trade.entry_price}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  entry_price: parseFloat(e.target.value),
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm">
-                              {formatCurrency(trade.entry_price)}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.exit_price && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="number"
-                              step="0.01"
-                              defaultValue={trade.exit_price}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  exit_price: parseFloat(e.target.value),
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm">
-                              {formatCurrency(trade.exit_price)}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.quantity && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="number"
-                              defaultValue={trade.quantity}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  quantity: parseInt(e.target.value),
-                                })
-                              }
-                            />
-                          ) : (
-                            <span className="text-sm">{trade.quantity}</span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.profit && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <input
-                              type="number"
-                              step="0.01"
-                              defaultValue={trade.profit}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full"
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  profit: parseFloat(e.target.value),
-                                })
-                              }
-                            />
-                          ) : (
-                            <span
-                              className={`font-medium ${
-                                (trade.profit || 0) >= 0
-                                  ? "text-green-400"
-                                  : "text-red-400"
-                              }`}
-                            >
-                              {formatCurrency(trade.profit)}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      {visibleColumns.notes && (
-                        <td className="p-4">
-                          {editingTrade === trade.id ? (
-                            <textarea
-                              defaultValue={trade.notes}
-                              className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm w-full resize-none"
-                              rows={2}
-                              onBlur={(e) =>
-                                handleUpdateTrade({
-                                  ...trade,
-                                  notes: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            <span
-                              className="text-sm text-gray-300 block truncate max-w-[80px]"
-                              title={trade.notes || ""}
-                            >
-                              {trade.notes || "—"}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          {editingTrade === trade.id ? (
-                            <>
-                              <button
-                                onClick={() => setEditingTrade(null)}
-                                className="text-green-400 hover:text-green-300 transition-colors"
-                                title="Save changes"
+                        {visibleColumns.date && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="date"
+                                defaultValue={trade.date}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    date: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="text-sm">
+                                {formatDate(trade.date)}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.trade_time && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="time"
+                                defaultValue={trade.trade_time}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    trade_time: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="text-sm">
+                                {formatTime(trade.trade_time)}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.symbol && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="text"
+                                defaultValue={trade.symbol}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    symbol: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="font-medium text-blue-600 dark:text-blue-400">
+                                {trade.symbol}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.type && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <select
+                                defaultValue={trade.type}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    type: e.target.value as "buy" | "sell",
+                                  })
+                                }
                               >
-                                <Save className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => setEditingTrade(null)}
-                                className="text-gray-400 hover:text-gray-300 transition-colors"
-                                title="Cancel editing"
+                                <option value="buy">Buy</option>
+                                <option value="sell">Sell</option>
+                              </select>
+                            ) : (
+                              <span
+                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+                                  trade.type === "buy"
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                                }`}
                               >
-                                <X className="h-4 w-4" />
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => setEditingTrade(trade.id)}
-                                className="text-blue-400 hover:text-blue-300 transition-colors"
-                                title="Edit trade"
+                                {trade.type === "buy" ? (
+                                  <TrendingUp className="h-3 w-3" />
+                                ) : (
+                                  <TrendingDown className="h-3 w-3" />
+                                )}
+                                {trade.type}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.entry_price && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="number"
+                                step="0.01"
+                                defaultValue={trade.entry_price}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    entry_price: parseFloat(e.target.value),
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="text-sm">
+                                {formatCurrency(trade.entry_price)}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.exit_price && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="number"
+                                step="0.01"
+                                defaultValue={trade.exit_price}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    exit_price: parseFloat(e.target.value),
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="text-sm">
+                                {formatCurrency(trade.exit_price)}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.quantity && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="number"
+                                defaultValue={trade.quantity}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    quantity: parseInt(e.target.value),
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span className="text-sm">{trade.quantity}</span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.profit && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <input
+                                type="number"
+                                step="0.01"
+                                defaultValue={trade.profit}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full"
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    profit: parseFloat(e.target.value),
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span
+                                className={`font-medium ${
+                                  (trade.profit || 0) >= 0
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-red-600 dark:text-red-400"
+                                }`}
                               >
-                                <Edit3 className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setSelectedTrades(new Set([trade.id]));
-                                  handleDeleteSelectedTrades();
-                                }}
-                                className="text-red-400 hover:text-red-300 transition-colors"
-                                title="Delete trade"
+                                {formatCurrency(trade.profit)}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.notes && (
+                          <td className="p-4">
+                            {editingTrade === trade.id ? (
+                              <textarea
+                                defaultValue={trade.notes}
+                                className="bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded px-2 py-1 text-sm w-full resize-none"
+                                rows={2}
+                                onBlur={(e) =>
+                                  handleUpdateTrade({
+                                    ...trade,
+                                    notes: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <span
+                                className="text-sm text-gray-500 dark:text-gray-300 block truncate max-w-[80px]"
+                                title={trade.notes || ""}
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                                {trade.notes || "—"}
+                              </span>
+                            )}
+                          </td>
+                        )}
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            {editingTrade === trade.id ? (
+                              <>
+                                <button
+                                  onClick={() => setEditingTrade(null)}
+                                  className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+                                  title="Save changes"
+                                >
+                                  <Save className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => setEditingTrade(null)}
+                                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                  title="Cancel editing"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => setEditingTrade(trade.id)}
+                                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                  title="Edit trade"
+                                >
+                                  <Edit3 className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedTrades(new Set([trade.id]));
+                                    handleDeleteSelectedTrades();
+                                  }}
+                                  className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                                  title="Delete trade"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1128,14 +1131,14 @@ const Trades = () => {
       {/* Create Trade Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Create New Trade</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Create New Trade</h3>
 
             <form onSubmit={handleSubmitNewTrade} className="space-y-4">
               {/* Date and Time Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Date
                   </label>
                   <input
@@ -1144,12 +1147,12 @@ const Trades = () => {
                     onChange={(e) =>
                       setNewTradeForm({ ...newTradeForm, date: e.target.value })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Time
                   </label>
                   <input
@@ -1161,7 +1164,7 @@ const Trades = () => {
                         trade_time: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1169,7 +1172,7 @@ const Trades = () => {
               {/* Symbol and Type Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Symbol *
                   </label>
                   <input
@@ -1182,12 +1185,12 @@ const Trades = () => {
                         symbol: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Type
                   </label>
                   <select
@@ -1198,7 +1201,7 @@ const Trades = () => {
                         type: e.target.value as "buy" | "sell",
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="buy">Buy</option>
                     <option value="sell">Sell</option>
@@ -1209,7 +1212,7 @@ const Trades = () => {
               {/* Entry and Exit Price Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Entry Price *
                   </label>
                   <input
@@ -1223,12 +1226,12 @@ const Trades = () => {
                         entry_price: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Exit Price
                   </label>
                   <input
@@ -1242,7 +1245,7 @@ const Trades = () => {
                         exit_price: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1250,7 +1253,7 @@ const Trades = () => {
               {/* Quantity and Profit Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Quantity *
                   </label>
                   <input
@@ -1263,12 +1266,12 @@ const Trades = () => {
                         quantity: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                     Profit/Loss
                   </label>
                   <input
@@ -1282,14 +1285,14 @@ const Trades = () => {
                         profit: e.target.value,
                       })
                     }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">
                   Notes
                 </label>
                 <textarea
@@ -1299,7 +1302,7 @@ const Trades = () => {
                     setNewTradeForm({ ...newTradeForm, notes: e.target.value })
                   }
                   rows={3}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full bg-gray-100 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
 
@@ -1308,13 +1311,13 @@ const Trades = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-200 text-gray-900 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                 >
                   Create Trade
                 </button>

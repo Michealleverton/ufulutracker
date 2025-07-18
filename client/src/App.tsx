@@ -5,7 +5,7 @@ import { Navbar } from './pages/Navbar';
 import { Footer } from './pages/Footer';
 import { Home } from './pages/Home';
 import { Community } from './pages/Community';
-import { ThemeProvider } from './Context/ThemeContext';
+// import { ThemeProvider } from './Context/ThemeContext';
 import { StrategyProvider } from './Context/StrategyContext';
 import './css/Loader.css'
 import Success from "./pages/Success";
@@ -64,11 +64,9 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard/*" element={
-              <ThemeProvider>
-                <StrategyProvider>
-                  <Dashboard />
-                </StrategyProvider>
-              </ThemeProvider>
+              <StrategyProvider>
+                <Dashboard />
+              </StrategyProvider>
             }>
               <Route index element={<Analytics />} />
               <Route path="analytics" element={<Analytics />} />

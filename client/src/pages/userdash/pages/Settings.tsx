@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTheme } from "../../../Context/ThemeContext";
 import { Mail, Lock, User } from "lucide-react";
 import { FormInput } from "../components/FormInput";
 import { supabase } from "../../../lib/supabase";
@@ -7,6 +8,7 @@ import useScrollToTop from "../../hooks/useScrollToTop";
 // import { useTheme } from "../../../Context/ThemeContext";
 
 const Settings = () => {
+  const { theme, toggleTheme } = useTheme();
 
   useScrollToTop();
 
@@ -483,7 +485,7 @@ const Settings = () => {
   return (
     <>
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-screen">
+        <div className="flex flex-col items-center justify-center h-screen bg-white dark:bg-gray-900">
           <div className="loader absolute top-1/2 left-1/2">
             <div className="loader-item"></div>
             <div className="loader-item"></div>
@@ -491,15 +493,15 @@ const Settings = () => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center items-center min-h-screen bg-gray-900 p-4">
+        <div className="flex justify-center items-center min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white p-4">
           <div className="w-full max-w-2xl space-y-8 pt-4">
-            <h1 className="text-3xl font-bold text-white mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
               Profile Settings
             </h1>
 
             {/* Avatar Section */}
-            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 flex flex-col items-center shadow-lg">
-              <h2 className="text-xl font-semibold text-white mb-4">Profile Avatar</h2>
+            <div className="bg-gray-100 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 flex flex-col items-center shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Profile Avatar</h2>
               <div className="relative flex flex-col items-center">
                 <img
                   src={avatarUrl || "https://ui-avatars.com/api/?name=User"}
@@ -524,10 +526,10 @@ const Settings = () => {
             </div>
 
             {/* Profile Info Cards Group */}
-            <div className="w-full flex flex-col gap-4 bg-gray-800 rounded-2xl p-6 mb-8 border border-gray-300/20">
+            <div className="w-full flex flex-col gap-4 bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 mb-8 border border-gray-300 dark:border-gray-300/20 shadow-lg">
               {/* Username Update Card */}
-              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
-                <h2 className="text-lg font-semibold text-white mb-4">Update Username</h2>
+              <div className="bg-white dark:bg-gray-900/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Update Username</h2>
                 <form onSubmit={handleUpdateProfile}>
                   <FormInput
                     id="username"
@@ -548,8 +550,8 @@ const Settings = () => {
               </div>
 
               {/* Email Update Card */}
-              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
-                <h2 className="text-lg font-semibold text-white mb-4">Update Email</h2>
+              <div className="bg-white dark:bg-gray-900/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Update Email</h2>
                 <form onSubmit={handleUpdateEmail}>
                   <FormInput
                     id="email"
@@ -570,8 +572,8 @@ const Settings = () => {
               </div>
 
               {/* Password Update Card */}
-              <div className="bg-gray-900/80 border border-gray-700 rounded-xl p-6 shadow-lg">
-                <h2 className="text-lg font-semibold text-white mb-4">Update Password</h2>
+              <div className="bg-white dark:bg-gray-900/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Update Password</h2>
                 <form onSubmit={handleUpdatePassword}>
                   <FormInput
                     id="password"
@@ -593,14 +595,14 @@ const Settings = () => {
             </div>
 
             {/* Subscription Section */}
-            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 shadow-lg">
-              <h2 className="text-xl font-semibold text-white mb-2">
+            <div className="bg-gray-100 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 Subscription
               </h2>
-              <div className="mb-2 text-gray-300">
+              <div className="mb-2 text-gray-700 dark:text-gray-300">
                 Current Plan: <span className="font-bold capitalize">{currentPlan} Plan</span>
               </div>
-              <div className="text-gray-500 mb-6 text-sm">
+              <div className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
                 {isFreePlan(currentPlan) ? 
                   'Upgrade to a paid plan to unlock more features and trading strategies.' :
                   'Update/Cancel your subscription plan or manage your billing details through the customer portal.'
@@ -618,16 +620,34 @@ const Settings = () => {
               </button>
             </div>
 
-            {/* Cancel Account Section */}
-            <div className="bg-gray-800/80 border border-gray-700 rounded-xl p-6 shadow-lg flex flex-col items-center">
-              <button
-                type="button"
-                className="w-full max-w-xs flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                onClick={() => setShowCancelModal(true)}
-              >
-                Cancel Ufulu Account
-              </button>
-            </div>
+      {/* Theme Switch Section */}
+      <div className="bg-gray-100 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg flex flex-col items-center mb-8">
+        <span className="text-gray-900 dark:text-white font-semibold mb-2">Theme</span>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="w-full max-w-xs flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-2"
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-8.66l-.71.71M4.05 4.05l-.71.71M21 12h-1M4 12H3m16.24 4.24l-.71-.71M6.34 17.66l-.71-.71" /></svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" /></svg>
+          )}
+          {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+        </button>
+        <span className="text-gray-500 dark:text-gray-400 text-xs">Current: {theme.charAt(0).toUpperCase() + theme.slice(1)}</span>
+      </div>
+      {/* Cancel Account Section */}
+      <div className="bg-gray-100 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-xl p-6 shadow-lg flex flex-col items-center">
+        <button
+          type="button"
+          className="w-full max-w-xs flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          onClick={() => setShowCancelModal(true)}
+        >
+          Cancel Ufulu Account
+        </button>
+      </div>
           </div>
         </div>
       )}
